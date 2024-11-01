@@ -1,5 +1,21 @@
-package com.example.course.controller;
+package com.example.moodie.controller;
 
+import com.example.course.dto.request.AccessControlRequest;
+import com.example.course.dto.request.LoginByEmailRequest;
+import com.example.course.dto.request.LoginByPhoneRequest;
+import com.example.course.dto.request.RegisterRequest;
+import com.example.course.dto.response.AccessControlResponse;
+import com.example.course.dto.response.AppResponse;
+import com.example.course.dto.response.LoginResponse;
+import com.example.course.dto.response.RegisterResponse;
+import com.example.course.entity.User;
+import com.example.course.repository.CourseRepository;
+import com.example.course.service.CourseService;
+import com.example.course.service.UserService;
+import com.example.course.util.ApiMessage;
+import com.example.course.util.StringHandler;
+import com.example.course.util.constant.AccessControlType;
+import com.example.course.util.constant.RoleEnum;
 import com.example.course.dto.request.AccessControlRequest;
 import com.example.course.dto.request.LoginByEmailRequest;
 import com.example.course.dto.request.LoginByPhoneRequest;
@@ -25,12 +41,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
 public class AuthenticationController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private CourseService courseService;
 
     private boolean hasAuthority(String role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -702,9 +721,9 @@ public class AuthenticationController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<AppResponse<Integer>> test() {
-        return new ResponseEntity<AppResponse<Integer>>(new AppResponse<Integer>(HttpStatus.OK.value(),
-                ApiMessage.SUCCESS, 1), HttpStatus.OK);
+    public ResponseEntity<AppResponse<List<Object[]>>> test() {
+        return new ResponseEntity<AppResponse<List<Object[]>>>(new AppResponse<List<Object[]>>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS,  courseService.test(1, 10)), HttpStatus.OK);
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.course.util;
 
+import com.example.course.entity.User;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -10,7 +11,7 @@ import com.nimbusds.jwt.SignedJWT;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.example.course.entity.User;
+
 import java.util.Date;
 
 @Component

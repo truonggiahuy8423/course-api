@@ -1,12 +1,20 @@
 package com.example.course.configuration;
 
-import com.example.course.entity.Permission;
+import com.example.moodie.entity.Permission;
+import com.example.moodie.entity.Role;
+import com.example.moodie.repository.PermissionRepository;
+import com.example.moodie.repository.RoleRepository;
+import com.example.moodie.repository.UserRepository;
+import com.example.moodie.service.UserService;
+import com.example.moodie.util.constant.PermissionEnum;
+import com.example.moodie.util.constant.RoleEnum;
 import com.example.course.entity.Role;
 import com.example.course.repository.PermissionRepository;
 import com.example.course.repository.RoleRepository;
 import com.example.course.service.UserService;
-import com.example.course.util.constant.PermissionEnum;
 import com.example.course.util.constant.RoleEnum;
+import com.example.course.entity.Permission;
+import com.example.course.util.constant.PermissionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

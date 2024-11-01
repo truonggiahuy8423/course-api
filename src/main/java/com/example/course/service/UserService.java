@@ -1,20 +1,22 @@
 package com.example.course.service;
 
-import com.example.course.dto.request.LoginByEmailRequest;
-import com.example.course.dto.request.LoginByPhoneRequest;
-import com.example.course.dto.request.RegisterRequest;
 import com.example.course.dto.response.LoginResponse;
-import com.example.course.dto.response.RegisterResponse;
+import com.example.course.entity.Administrator;
 import com.example.course.entity.Role;
 import com.example.course.entity.RoleUser;
 import com.example.course.entity.User;
 import com.example.course.entity.composite.RoleUserId;
-import com.example.course.exception.AppRuntimeException;
+import com.example.course.mapper.UserMapper;
+import com.example.course.repository.AdministratorRepository;
 import com.example.course.repository.RoleRepository;
 import com.example.course.repository.RoleUserRepository;
-import com.example.course.util.constant.ExceptionType;
-import com.example.course.mapper.UserMapper;
 import com.example.course.repository.UserRepository;
+import com.example.course.dto.request.LoginByEmailRequest;
+import com.example.course.dto.request.LoginByPhoneRequest;
+import com.example.course.dto.request.RegisterRequest;
+import com.example.course.dto.response.RegisterResponse;
+import com.example.course.exception.AppRuntimeException;
+import com.example.course.util.constant.ExceptionType;
 import com.example.course.util.JwtProvider;
 import com.example.course.util.StringHandler;
 import com.nimbusds.jose.JOSEException;
@@ -43,6 +45,8 @@ public class UserService {
 
     @Autowired
     private RoleUserRepository roleUserRepository;
+    @Autowired
+    private AdministratorRepository administratorRepository;
 
     public RegisterResponse register(RegisterRequest registerRequest) {
         areEmailAndPhoneEmpty(registerRequest);
@@ -156,10 +160,14 @@ public class UserService {
 
         if (user == null) {
             // Nếu user chưa tồn tại, tạo mới user
+            Administrator administrator = new Administrator();
+            administrator = administratorRepository.save(administrator);
+
             user = User.builder()
                     .username(userName)
                     .email("admin@example.com")
                     .password(passwordEncoder.encode(adminInitPassword))
+                    .administrator(administrator)
                     .build();
             user = userRepository.save(user);
         } else return;

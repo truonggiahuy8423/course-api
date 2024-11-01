@@ -48,8 +48,7 @@ public class Course {
     @OneToMany(mappedBy = "course")
     private List<CourseRoomMessage> courseRoomMessages;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<CourseLecturer> lecturers;
 
     @JsonIgnore
