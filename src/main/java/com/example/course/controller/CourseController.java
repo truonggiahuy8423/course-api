@@ -1,7 +1,8 @@
 package com.example.course.controller;
 
-import com.example.course.dto.response.CourseDTO;
-import com.example.course.dto.response.GetCourseDTO;
+import com.example.course.dto.response.GetCoursesDTO;
+import com.example.course.dto.response.GetLecturersDTO;
+import com.example.course.dto.response.GetSubjectDTO;
 import com.example.course.service.CourseService;
 import com.example.course.dto.response.AppResponse;
 import com.example.course.util.ApiMessage;
@@ -12,19 +13,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping("/get-courses")
-    public ResponseEntity<AppResponse<GetCourseDTO>> getCourses(
+    @GetMapping("/get-course-list")
+    public ResponseEntity<AppResponse<GetCoursesDTO>> getCourses(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "sort", defaultValue = "1") String sort,
@@ -33,10 +31,32 @@ public class CourseController {
 
         System.out.println(page);
 
-        return new ResponseEntity<AppResponse<GetCourseDTO>>(new AppResponse<GetCourseDTO>(HttpStatus.OK.value(),
+        return new ResponseEntity<AppResponse<GetCoursesDTO>>(new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
                 ApiMessage.SUCCESS, courseService.getCourses(page, pageSize, sort, sortDir)), HttpStatus.OK);
     }
 
+
+    @GetMapping("/get-lecturer-list")
+    public ResponseEntity<AppResponse<GetLecturersDTO>> getLecturersList(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "1") String sort,
+            @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<AppResponse<GetLecturersDTO>>(new AppResponse<GetLecturersDTO>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS, courseService.getLecturers(page, pageSize, sort, sortDir)), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-subject-list")
+    public ResponseEntity<AppResponse<GetSubjectDTO>> getSubjectList(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "1") String sort,
+            @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<AppResponse<GetSubjectDTO>>(new AppResponse<GetSubjectDTO>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS, courseService.getSubjects(page, pageSize, sort, sortDir)), HttpStatus.OK);
+    }
 
     @GetMapping("/test-role")
     public ResponseEntity<AppResponse<String>> testRole() {

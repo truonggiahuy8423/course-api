@@ -36,6 +36,10 @@ public class Subject {
     @CreationTimestamp
     private LocalDateTime updatedDate;
 
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "subject")

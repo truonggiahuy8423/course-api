@@ -1,11 +1,9 @@
 package com.example.course.service;
 
-import com.example.course.dto.response.CourseDTO;
-import com.example.course.dto.response.GetCourseDTO;
-import com.example.course.dto.response.LecturerDTO;
-import com.example.course.entity.Lecturer;
+import com.example.course.dto.response.*;
 import com.example.course.repository.CourseRepository;
 import com.example.course.repository.LecturerRepository;
+import com.example.course.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -25,8 +22,10 @@ public class CourseService {
 
     @Autowired
     private LecturerRepository lecturerRepository;
+    @Autowired
+    private SubjectRepository subjectRepository;
 
-    public GetCourseDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
+    public GetCoursesDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
         // Tạo Pageable từ các tham số được truyền vào
         String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -36,8 +35,29 @@ public class CourseService {
         res = res.stream()
                 .peek(courseDTO -> courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId())))
                 .toList();
-        return new GetCourseDTO(res, courseRepository.findAll().size());
+        return new GetCoursesDTO(res, courseRepository.findAll().size());
     }
+
+    public GetLecturersDTO getLecturers(Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttributeLecturers(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<LecturerInCreateCourseDTO> lecturers = lecturerRepository.findLecturers(pageable);
+        Integer total = lecturerRepository.findAll().size();
+        return new GetLecturersDTO(lecturers, total);
+    }
+
+    public GetSubjectDTO getSubjects(Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttributeSubjects(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<SubjectInCreateCourseDTO> subjects = subjectRepository.findSubjects(pageable);
+        Integer total = subjectRepository.findAll().size();
+        return new GetSubjectDTO(subjects, total);
+    }
+
 
     // Hàm lấy thuộc tính sắp xếp
     private String getSortAttribute(String sort) {
@@ -47,6 +67,28 @@ public class CourseService {
         sortMapper.put(3, "c.startDate");
         sortMapper.put(4, "c.endDate");
         sortMapper.put(5, "COUNT(s)");
+
+        return sortMapper.get(Integer.valueOf(sort));
+    }
+
+    private String getSortAttributeLecturers(String sort) {
+        Map<Integer, String> sortMapper = new HashMap<>();
+        sortMapper.put(1, "lec.lecturerId");
+        sortMapper.put(2, "u.username");
+//        sortMapper.put(3, "c.startDate");
+//        sortMapper.put(4, "c.endDate");
+//        sortMapper.put(5, "COUNT(s)");
+
+        return sortMapper.get(Integer.valueOf(sort));
+    }
+
+    private String getSortAttributeSubjects(String sort) {
+        Map<Integer, String> sortMapper = new HashMap<>();
+        sortMapper.put(1, "s.subjectId");
+        sortMapper.put(2, "s.subjectName");
+//        sortMapper.put(3, "c.startDate");
+//        sortMapper.put(4, "c.endDate");
+//        sortMapper.put(5, "COUNT(s)");
 
         return sortMapper.get(Integer.valueOf(sort));
     }
