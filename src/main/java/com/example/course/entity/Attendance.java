@@ -47,5 +47,4 @@ public class Attendance {
     @JoinColumn(name = "course_schedule_id", referencedColumnName = "course_schedule_id")
     private CourseSchedule courseSchedule;
 
-
 }

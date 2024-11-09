@@ -34,7 +34,7 @@ public class Submit {
     @OneToMany(mappedBy = "submit")
     private List<FileSubmit> files;
 
-    //Relation "Many"
+    // Relation "Many"
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "assignment_id", referencedColumnName = "assignment_id")

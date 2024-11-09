@@ -4,13 +4,14 @@ import com.example.course.util.constant.ExceptionType;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import com.example.course.util.constant.ExceptionType;
+
 @Getter
 public class AppRuntimeException extends RuntimeException {
 
     private final Integer errorCode;
     private final String errorMessage;
     private final HttpStatus httpStatus;
-
 
     // Constructor receiving ExceptionType enum
     public AppRuntimeException(ExceptionType exceptionType) {

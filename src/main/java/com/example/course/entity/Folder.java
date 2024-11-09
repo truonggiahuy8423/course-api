@@ -52,7 +52,7 @@ public class Folder {
     @OneToMany(mappedBy = "folder")
     private List<FileFolder> files;
 
-    //Relation "Many"
+    // Relation "Many"
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "course_id")

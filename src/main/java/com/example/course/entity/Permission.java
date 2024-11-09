@@ -22,7 +22,7 @@ public class Permission {
     @Column(name = "permission_name", columnDefinition = "VARCHAR(100)")
     private String permissionName;
 
-    //Relation "One"
+    // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "permission")
     private List<PermissionUser> users;

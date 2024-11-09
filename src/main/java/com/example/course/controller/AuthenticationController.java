@@ -49,7 +49,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/access-control")
-    public ResponseEntity<AppResponse<AccessControlResponse>> getAccessControl(@RequestBody AccessControlRequest accessControlRequest) {
+    public ResponseEntity<AppResponse<AccessControlResponse>> getAccessControl(
+            @RequestBody AccessControlRequest accessControlRequest) {
         String url = accessControlRequest.getUrl();
 
         // Tạo đối tượng AccessControlResponse
@@ -136,7 +137,8 @@ public class AuthenticationController {
         }
 
         // Trả về response
-        return new ResponseEntity<>(new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, response), HttpStatus.OK);
+        return new ResponseEntity<>(new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, response),
+                HttpStatus.OK);
     }
 
     private void handleCourses(String url, AccessControlResponse response) { //
@@ -355,7 +357,8 @@ public class AuthenticationController {
 
     private void handleCourseConversation(String url, AccessControlResponse response) { //
         // Logic xử lý cho /course/{id}/conversation
-//        String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.DENIED.getStatus());
             response.setMessage(AccessControlType.DENIED.getMessage());
@@ -408,7 +411,8 @@ public class AuthenticationController {
 
     private void handleAdminCourseInfor(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/course/{id}/infor
-//        String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -426,7 +430,8 @@ public class AuthenticationController {
 
     private void handleAdminCourseAttendance(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/course/{id}/attendance
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -444,7 +449,8 @@ public class AuthenticationController {
 
     private void handleAdminCourseResource(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/course/{id}/resource
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -462,7 +468,8 @@ public class AuthenticationController {
 
     private void handleAdminCourseConversation(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/course/{id}/conversation
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -478,14 +485,15 @@ public class AuthenticationController {
         }
     }
 
-//    private void handleAdminUser(String url, AccessControlResponse response) {
-//        // Logic xử lý cho /admin/user/{id}
-//        response.setMessage("Access granted to admin user for role: ");
-//    }
+    // private void handleAdminUser(String url, AccessControlResponse response) {
+    // // Logic xử lý cho /admin/user/{id}
+    // response.setMessage("Access granted to admin user for role: ");
+    // }
 
     private void handleAdminLecturer(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/lecturer/{id}
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -503,7 +511,8 @@ public class AuthenticationController {
 
     private void handleAdminStudent(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/student/{id}
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -521,7 +530,8 @@ public class AuthenticationController {
 
     private void handleAdminSubject(String url, AccessControlResponse response) { //
         // Logic xử lý cho /admin/student/{id}
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -539,7 +549,8 @@ public class AuthenticationController {
 
     private void handleAdminGuests(String url, AccessControlResponse response) {
         // Logic for handling /admin/guests
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -557,7 +568,8 @@ public class AuthenticationController {
 
     private void handleAdminSubjects(String url, AccessControlResponse response) {
         // Logic for handling /admin/guests
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -575,7 +587,8 @@ public class AuthenticationController {
 
     private void handleAdminSubjectsCreate(String url, AccessControlResponse response) {
         // Logic for handling /admin/guests
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -593,7 +606,8 @@ public class AuthenticationController {
 
     private void handleAdminGuestsCreate(String url, AccessControlResponse response) {
         // Logic for handling /admin/guests
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -611,7 +625,8 @@ public class AuthenticationController {
 
     private void handleAdminAdministrators(String url, AccessControlResponse response) {
         // Logic for handling /admin/administrators
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -629,7 +644,8 @@ public class AuthenticationController {
 
     private void handleAdminAdministratorsCreate(String url, AccessControlResponse response) {
         // Logic for handling /admin/administrators
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -647,7 +663,8 @@ public class AuthenticationController {
 
     private void handleAdminGuest(String url, AccessControlResponse response) {
         // Logic for handling /admin/guest/{id}
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -665,7 +682,8 @@ public class AuthenticationController {
 
     private void handleAdminAdministrator(String url, AccessControlResponse response) {
         // Logic for handling /admin/administrator/{id}
-        // String courseId = Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
+        // String courseId =
+        // Objects.requireNonNull(StringHandler.extractNumberAtIndex(url, 0));
         if (hasAuthority(RoleEnum.ADMIN.getRoleName())) {
             response.setStatus(AccessControlType.OK.getStatus());
             response.setMessage(AccessControlType.OK.getMessage());
@@ -684,8 +702,10 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<AppResponse<RegisterResponse>> register(@RequestBody @Valid RegisterRequest user) {
         RegisterResponse registerResponse = userService.register(user);
-        return new ResponseEntity<AppResponse<RegisterResponse>>(new AppResponse<RegisterResponse>(HttpStatus.OK.value(),
-                ApiMessage.SUCCESS, registerResponse), HttpStatus.OK);
+        return new ResponseEntity<AppResponse<RegisterResponse>>(
+                new AppResponse<RegisterResponse>(HttpStatus.OK.value(),
+                        ApiMessage.SUCCESS, registerResponse),
+                HttpStatus.OK);
     }
 
     @PostMapping("/login-by-email")
@@ -711,6 +731,5 @@ public class AuthenticationController {
         return new ResponseEntity<AppResponse<List<Object[]>>>(new AppResponse<List<Object[]>>(HttpStatus.OK.value(),
                 ApiMessage.SUCCESS,  courseService.test(1, 10)), HttpStatus.OK);
     }
-
 
 }

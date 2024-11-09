@@ -71,9 +71,7 @@ public class JwtProvider {
             // permission
         });
 
-
         return scope.toString().trim(); // Trả về chuỗi và loại bỏ khoảng trắng thừa
     }
-
 
 }

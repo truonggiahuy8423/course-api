@@ -1,6 +1,4 @@
 package com.example.course.configuration.websocket;
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
@@ -8,13 +6,15 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
 
 @Configuration
-//@EnableWebSocketSecurity
+// @EnableWebSocketSecurity
 public class WebSocketSecurityConfig {
-//    @Bean
-//    AuthorizationManager<Message<?>> authorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
-//        messages.simpDestMatchers("/user/queue/errors").permitAll()
-//                .simpDestMatchers("/admin/**").hasRole("ADMIN")
-//                .anyMessage().authenticated();
-//        return messages.build();
-//    }
+    // @Bean
+    // AuthorizationManager<Message<?>>
+    // authorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder
+    // messages) {
+    // messages.simpDestMatchers("/user/queue/errors").permitAll()
+    // .simpDestMatchers("/admin/**").hasRole("ADMIN")
+    // .anyMessage().authenticated();
+    // return messages.build();
+    // }
 }

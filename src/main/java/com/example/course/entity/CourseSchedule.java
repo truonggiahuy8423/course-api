@@ -36,12 +36,12 @@ public class CourseSchedule {
     @CreationTimestamp
     private LocalDateTime endTime;
 
-    //Relation "One"
+    // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "courseSchedule")
     private List<Attendance> attendances;
 
-    //Relation "Many"
+    // Relation "Many"
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "room_id")

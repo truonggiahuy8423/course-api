@@ -102,8 +102,4 @@ public class User {
     @JoinColumn(name = "lecturer_id", referencedColumnName = "lecturer_id")
     private Lecturer lecturer;
 
-
-
-
 }
-

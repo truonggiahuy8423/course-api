@@ -41,5 +41,4 @@ public class FileSubmit {
     @JoinColumn(name = "file_id", referencedColumnName = "file_id")
     private File file;
 
-
 }
