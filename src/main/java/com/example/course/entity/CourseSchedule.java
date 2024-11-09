@@ -18,7 +18,7 @@ public class CourseSchedule {
     @Id
     @Column(name = "course_schedule_id", columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long classScheduleId;
+    private Long courseScheduleId;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreationTimestamp

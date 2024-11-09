@@ -1,6 +1,7 @@
 package com.example.course.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -56,7 +57,8 @@ public class User {
     private String countryCode;
 
     @Lob
-    @Column(name = "avatar")
+    @Nullable
+    @Column(name = "avatar", columnDefinition = "LONGBLOB")
     private byte[] avatar;
 
     // Relation "One"

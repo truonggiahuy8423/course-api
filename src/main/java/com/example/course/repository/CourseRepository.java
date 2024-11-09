@@ -23,6 +23,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Override
     List<Course> findAll();
 
+
+
     //    @Query("SELECT " +
 //            "c.courseId, c.createdDate,  c.updatedDate, c.startDate, c.endDate, " +
 //            "c.lecturers, COUNT(s), c.subject " +

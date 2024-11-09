@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GetSubjectDTO {
+public class GetSubjectsDTO {
     List<SubjectInCreateCourseDTO> subjects;
     Integer total;
 }

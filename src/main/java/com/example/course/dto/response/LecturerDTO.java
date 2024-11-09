@@ -1,5 +1,6 @@
 package com.example.course.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ public class LecturerDTO {
     private Long lecturerId;
     private String username;
     private String email;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime lastAccess;
     private Boolean gender; // Female true - Male false
     private byte[] avatar;
