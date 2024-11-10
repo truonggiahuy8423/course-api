@@ -1,4 +1,4 @@
-package com.example.course.controller;
+package com.example.moodie.controller;
 
 import com.example.course.dto.request.AccessControlRequest;
 import com.example.course.dto.request.LoginByEmailRequest;
@@ -11,6 +11,20 @@ import com.example.course.dto.response.RegisterResponse;
 import com.example.course.entity.User;
 import com.example.course.repository.CourseRepository;
 import com.example.course.service.CourseService;
+import com.example.course.service.UserService;
+import com.example.course.util.ApiMessage;
+import com.example.course.util.StringHandler;
+import com.example.course.util.constant.AccessControlType;
+import com.example.course.util.constant.RoleEnum;
+import com.example.course.dto.request.AccessControlRequest;
+import com.example.course.dto.request.LoginByEmailRequest;
+import com.example.course.dto.request.LoginByPhoneRequest;
+import com.example.course.dto.request.RegisterRequest;
+import com.example.course.dto.response.AccessControlResponse;
+import com.example.course.dto.response.AppResponse;
+import com.example.course.dto.response.LoginResponse;
+import com.example.course.dto.response.RegisterResponse;
+import com.example.course.entity.User;
 import com.example.course.service.UserService;
 import com.example.course.util.ApiMessage;
 import com.example.course.util.StringHandler;

@@ -1,9 +1,5 @@
 package com.example.course.dto.response;
 
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;

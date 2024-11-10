@@ -2,8 +2,6 @@ package com.example.course.dto.response;
 
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

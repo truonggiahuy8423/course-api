@@ -1,9 +1,6 @@
 package com.example.course.configuration.websocket;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
-import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
-import org.springframework.security.config.annotation.web.socket.EnableWebSocketSecurity;
 
 @Configuration
 // @EnableWebSocketSecurity
