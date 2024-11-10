@@ -38,4 +38,8 @@ public class Category {
     @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Subject> subjects;
+
+    public Category(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }
