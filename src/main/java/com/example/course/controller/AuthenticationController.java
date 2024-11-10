@@ -1,4 +1,4 @@
-package com.example.course.controller;
+package com.example.moodie.controller;
 
 import com.example.course.dto.request.AccessControlRequest;
 import com.example.course.dto.request.LoginByEmailRequest;
