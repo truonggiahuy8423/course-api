@@ -50,6 +50,8 @@ import com.nimbusds.jose.JOSEException;
 
 import jakarta.transaction.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     @Value("${admin.init-password}")
@@ -215,7 +217,7 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        roleUserRepository.deleteRolesByUserId(userId);
+//        roleUserRepository.deleteRolesByUserId(userId);
         userRepository.deleteById(userId);
     }
 
