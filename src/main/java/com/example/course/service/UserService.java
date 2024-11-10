@@ -215,7 +215,7 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        roleUserRepository.deleteRolesByUserId(userId);
+        roleUserRepository.deleteByUserId(userId);
         userRepository.deleteById(userId);
     }
 
