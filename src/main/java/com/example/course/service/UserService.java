@@ -175,7 +175,8 @@ public class UserService {
     }
 
     public Page<User> getAdminList(Pageable p) {
-        return userRepository.findAllAdmins(p);
+        Page<User> res = userRepository.findAllAdmins(p);
+        return res;
     }
 
     public RegisterResponse createAdmin(RegisterRequest registerRequest) {

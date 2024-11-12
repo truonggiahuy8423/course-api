@@ -91,6 +91,7 @@ public class User {
     @OneToMany(mappedBy = "receiver")
     private List<PrivateMessage> receivedPrivateMessage;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "administrator_id", referencedColumnName = "administrator_id")
     private Administrator administrator;
