@@ -1,5 +1,6 @@
 package com.example.course.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,7 @@ public class Administrator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long administratorId;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "administrator")
     private User user;
 

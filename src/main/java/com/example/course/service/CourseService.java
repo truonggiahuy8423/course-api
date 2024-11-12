@@ -57,6 +57,27 @@ public class CourseService {
         return new GetCoursesDTO(res, courseRepository.findAll().size());
     }
 
+    public CourseDTO getCourseById(Long courseId) {
+        // Tạo Pageable từ các tham số được truyền vào
+        CourseDTO courseDTO = courseRepository.getCourseById(courseId).orElseThrow(
+                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND, "Course(ID: " + courseId + ") not found")
+        );
+        courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId()));
+        return courseDTO;
+    }
+
+    public CourseDTO getCourseByIdWithMembers(Long courseId) {
+        // Tạo Pageable từ các tham số được truyền vào
+        CourseDTO courseDTO = courseRepository.getCourseById(courseId).orElseThrow(
+                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND, "Course(ID: " + courseId + ") not found")
+        );
+        courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId()));
+//        courseDTO.setStudents(getLStudentsByCourseId(courseDTO.getCourseId()));
+        courseDTO.setSchedules(getSchedulesByCourseId(courseDTO.getCourseId()));
+
+        return courseDTO;
+    }
+
     public GetLecturersDTO getLecturers(Integer page, Integer pageSize, String sort, String sortDir) {
         String sortAttr = getSortAttributeLecturers(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -86,6 +107,18 @@ public class CourseService {
         Integer total = studentRepository.findAll().size();
         return new GetStudentsDTO(students, total);
     }
+
+    public GetStudentsDTO getStudentsByCourseId(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttributeStudents(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
+        Integer total = studentRepository.findAll().size();
+        return new GetStudentsDTO(students, total);
+    }
+
+
 
     public GetRoomsDTO getRooms(Integer page, Integer pageSize, String sort, String sortDir) {
         String sortAttr = getSortAttributeRooms(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
@@ -283,6 +316,15 @@ public class CourseService {
     public List<LecturerDTO> getLecturersByCourseId(Long courseId) {
         return lecturerRepository.findByCourseId(courseId);
     }
+
+//    public List<StudentInCreateCourseDTO> getLStudentsByCourseId(Long courseId) {
+//        return courseStudentRepository.findByCourseId(courseId);
+//    }
+
+    public List<ScheduleDTO> getSchedulesByCourseId(Long courseId) {
+        return courseScheduleRepository.findByCourseId(courseId);
+    }
+
 
     public List<Object[]> test(Integer page_index, Integer limit) {
         Pageable pageable = PageRequest.of(page_index - 1, limit); // Trang đầu tiên, 5 kết quả

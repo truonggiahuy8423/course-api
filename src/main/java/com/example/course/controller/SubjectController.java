@@ -1,6 +1,6 @@
 package com.example.course.controller;
 
-//import com.example.course.dto.SubjectDTO;
+import com.example.course.dto.SubjectDTO;
 import com.example.course.dto.response.AppResponse;
 import com.example.course.entity.Category;
 import com.example.course.entity.Subject;

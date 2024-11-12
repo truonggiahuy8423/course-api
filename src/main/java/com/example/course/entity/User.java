@@ -50,6 +50,7 @@ public class User {
     @Column(name = "gender")
     private Boolean gender; // Female true - Male fale
 
+    @Nullable
     @Column(name = "date_of_birth")
     private LocalDate dob;
 

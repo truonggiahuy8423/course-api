@@ -1,6 +1,7 @@
 package com.example.course.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,6 +35,14 @@ public class Course {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Lob
+    @Nullable
+    @Column(name = "thumbnail", columnDefinition = "LONGBLOB")
+    private byte[] thumbnail;
+
+    @Column(name = "price")
+    private Long price;
 
     // Relation "One"
     @JsonIgnore

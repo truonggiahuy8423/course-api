@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class CourseController {
     @Autowired
@@ -74,6 +76,34 @@ public class CourseController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return new ResponseEntity<AppResponse<GetRoomsDTO>>(new AppResponse<GetRoomsDTO>(HttpStatus.OK.value(),
                 ApiMessage.SUCCESS, courseService.getRooms(page, pageSize, sort, sortDir)), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-course-by-id")
+    public ResponseEntity<AppResponse<CourseDTO>> getCourseById(
+            @RequestParam(value = "courseId") Long courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<AppResponse<CourseDTO>>(new AppResponse<CourseDTO>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS, courseService.getCourseById(courseId)), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-students-by-course-id")
+    public ResponseEntity<AppResponse<GetStudentsDTO>> getStudentsByCourseId(
+            @RequestParam(value = "courseId") Long courseId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "1") String sort,
+            @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<AppResponse<GetStudentsDTO>>(new AppResponse<GetStudentsDTO>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS, courseService.getStudentsByCourseId(courseId, page, pageSize, sort, sortDir)), HttpStatus.OK);
+    }
+
+    @GetMapping("/get-course-details-by-id")
+    public ResponseEntity<AppResponse<CourseDTO>> getCourseDetailsById(
+            @RequestParam(value = "courseId") Long courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return new ResponseEntity<AppResponse<CourseDTO>>(new AppResponse<CourseDTO>(HttpStatus.OK.value(),
+                ApiMessage.SUCCESS, courseService.getCourseByIdWithMembers(courseId)), HttpStatus.OK);
     }
 
     @PostMapping("/create-course")
