@@ -1,5 +1,6 @@
 package com.example.course.controller;
 
+import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCourseDTO;
 import com.example.course.service.CourseService;
@@ -52,5 +53,10 @@ public class CourseController {
                 ApiMessage.SUCCESS, "Null"), HttpStatus.OK);    }
 
 
+    @PostMapping("/cards")
+    public ResponseEntity<List<CourseCardDTO>> getAllCourseCards() {
+        List<CourseCardDTO> courseCards = courseService.getAllCourseCards();
+        return ResponseEntity.ok(courseCards);
+    }
 
 }

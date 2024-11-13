@@ -27,17 +27,6 @@ public class CourseDTO {
     private Long numberOfStudents;
     private Subject subject;
     public CourseDTO() {}
-//    public CourseDTO(Long courseId, LocalDateTime createdDate, LocalDateTime updatedDate,
-//                     LocalDate startDate, LocalDate endDate, List<CourseLecturer> lecturers, Long numberOfStudents, Subject subject) {
-//        this.courseId = courseId;
-//        this.createdDate = createdDate;
-//        this.updatedDate = updatedDate;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.lecturers = lecturers;
-//        this.numberOfStudents = numberOfStudents; // Chuyển Long sang Integer nếu cần
-//        this.subject = subject;
-//    }
 
     public CourseDTO(Long courseId, LocalDateTime createdDate, LocalDateTime updatedDate,
                      LocalDate startDate, LocalDate endDate, Long numberOfStudents, Subject subject) {
