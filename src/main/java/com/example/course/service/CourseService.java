@@ -30,6 +30,7 @@ public class CourseService {
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
     }
+
     public GetCourseDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
         // Tạo Pageable từ các tham số được truyền vào
         String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
@@ -42,7 +43,6 @@ public class CourseService {
                 .toList();
         return new GetCourseDTO(res, courseRepository.findAll().size());
     }
-
     // Hàm lấy thuộc tính sắp xếp
     private String getSortAttribute(String sort) {
         Map<Integer, String> sortMapper = new HashMap<>();
@@ -72,11 +72,7 @@ public class CourseService {
             // Tính duration theo số tháng giữa startDate và endDate
             long months = ChronoUnit.MONTHS.between(course.getStartDate(), course.getEndDate());
             course.setDuration(months + " tháng");
-
-            // Lấy danh sách giảng viên theo courseId
             List<LecturerDTO> lecturers = getLecturersByCourseId(course.getCourseId());
-
-            // Ghép tên các giảng viên thành chuỗi và gán vào CourseCardDTO
             String lecturerNames = lecturers.stream()
                     .map(LecturerDTO::getUsername) // Sử dụng đúng getter
                     .collect(Collectors.joining(", "));

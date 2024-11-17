@@ -2,6 +2,7 @@ package com.example.course.repository;
 
 import com.example.course.dto.response.LecturerDTO;
 import com.example.course.entity.Lecturer;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +17,12 @@ public interface LecturerRepository extends JpaRepository<Lecturer, Long> {
             "LEFT JOIN lec.user u " +
             "WHERE c.courseId = :courseId ")
     List<LecturerDTO> findByCourseId(Long courseId);
+    @Query("SELECT new com.example.course.dto.response.LecturerDTO(" +
+            "l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar) " +
+            "FROM Lecturer l " +
+            "LEFT JOIN l.user u " +
+            "GROUP BY l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar")
+    List<LecturerDTO> getLecturers(Pageable pageable);
+
+
 }
