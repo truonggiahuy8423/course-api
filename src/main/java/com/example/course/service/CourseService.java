@@ -114,7 +114,7 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
 
         List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
-        Integer total = studentRepository.findAll().size();
+        Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
         return new GetStudentsDTO(students, total);
     }
 

@@ -20,4 +20,9 @@ public interface CourseStudentRepository extends JpaRepository<CourseStudent, Co
             "LEFT JOIN s.user u WHERE cs.course.courseId = :courseId")
     List<StudentInCreateCourseDTO> findByCourseId(Long courseId, Pageable pageable);
 
+    @Query("SELECT COUNT(*) " +
+            "FROM CourseStudent cs " +
+            "WHERE cs.id.courseId = :courseId")
+    Integer countStudentsByCourseId(Long courseId);
+
 }

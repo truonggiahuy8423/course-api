@@ -19,4 +19,19 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "FROM Student s " +
             "LEFT JOIN s.user u ")
     List<StudentInCreateCourseDTO> findStudents(Pageable pageable);
+
+//    @Query("SELECT new com.example.course.dto.response.StudentInCreateCourseDTO(" +
+//            "s.studentId, u.userId, u.username, u.email, u.gender, u.dob, u.lastAccess, u.avatar) " +
+//            "FROM Student s " +
+//            "LEFT JOIN s.user u " +
+//            "LEFT JOIN CourseStudent cs " +
+//            "WHERE cs.course.courseId = :courseId")
+//    List<StudentInCreateCourseDTO> findStudentsByCourseId(Long courseId, Pageable pageable);
+//
+//    @Query("SELECT COUNT(*) " +
+//            "FROM Student s " +
+//            "LEFT JOIN s.user u " +
+//            "LEFT JOIN CourseStudent cs " +
+//            "WHERE cs.course.courseId = :courseId")
+//    Integer countStudentsByCourseId(Long courseId);
 }
