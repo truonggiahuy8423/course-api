@@ -41,5 +41,4 @@ public class CourseStudent {
     @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     private Student student;
 
-
 }

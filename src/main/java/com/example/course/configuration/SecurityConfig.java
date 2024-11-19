@@ -35,7 +35,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 
-
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.util.Arrays;
@@ -59,37 +58,37 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.oauth2ResourceServer((oauth -> oauth.jwt(jwtConfigurer -> jwtConfigurer
                 .decoder(jwtDecoder())
-                .jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                );
+                .jwtAuthenticationConverter(jwtAuthenticationConverter()))));
         httpSecurity
-//                .cors(Customizer.withDefaults())
-//                .csrf(AbstractHttpConfigurer::disable)
+                // .cors(Customizer.withDefaults())
+                // .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/ws/**").permitAll()  // Cho phép truy cập WebSocket
+                        .requestMatchers("/ws/**").permitAll() // Cho phép truy cập WebSocket
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(exceptionHandling ->
-                    exceptionHandling.authenticationEntryPoint(new AuthenticationEntryPoint() {
-                        @Override
-                        public void commence(HttpServletRequest request, HttpServletResponse response,
-                                             AuthenticationException authException) throws IOException {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            response.setContentType("application/json");
-                            ObjectMapper objectMapper = new ObjectMapper();
-                            ExceptionType e = ExceptionType.AUTHENTICATION_ERROR;
-                            System.out.println("Header: " + request.getHeader("Authorization") + "\n" + request.toString());
-                            response.getWriter().write(objectMapper.writeValueAsString(new AppResponse<>(e.getHttpStatus().value(), ApiMessage.FAILED,
-                                    new ErrorResponse(e.getErrorCode(), e.getErrorMessage()))
-                            ));
-                    }
-                })
+                        .anyRequest().authenticated())
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling.authenticationEntryPoint(new AuthenticationEntryPoint() {
+                            @Override
+                            public void commence(HttpServletRequest request, HttpServletResponse response,
+                                    AuthenticationException authException) throws IOException {
+                                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                                response.setContentType("application/json");
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                ExceptionType e = ExceptionType.AUTHENTICATION_ERROR;
+                                System.out.println(
+                                        "Header: " + request.getHeader("Authorization") + "\n" + request.toString());
+                                response.getWriter()
+                                        .write(objectMapper.writeValueAsString(
+                                                new AppResponse<>(e.getHttpStatus().value(), ApiMessage.FAILED,
+                                                        new ErrorResponse(e.getErrorCode(), e.getErrorMessage()))));
+                            }
+                        })
 
-        );
+                );
 
         return httpSecurity.build();
     }
@@ -125,12 +124,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         return converter;
     }
 
-
-
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3030", "http://localhost:3030", "http://127.0.0.1:5173", "http://localhost:5173", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3030", "http://localhost:3030",
+                "http://127.0.0.1:5173", "http://localhost:5173", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

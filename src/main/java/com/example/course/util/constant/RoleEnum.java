@@ -11,7 +11,5 @@ public enum RoleEnum {
     LECTURER("LECTURER"),
     GUEST("GUEST");
 
-
-
     private final String roleName;
 }

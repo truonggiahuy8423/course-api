@@ -1,6 +1,13 @@
 package com.example.course.configuration;
 
-
+import com.example.course.entity.Permission;
+import com.example.course.entity.Role;
+import com.example.course.repository.PermissionRepository;
+import com.example.course.repository.RoleRepository;
+import com.example.course.repository.UserRepository;
+import com.example.course.service.UserService;
+import com.example.course.util.constant.PermissionEnum;
+import com.example.course.util.constant.RoleEnum;
 import com.example.course.entity.Role;
 import com.example.course.repository.PermissionRepository;
 import com.example.course.repository.RoleRepository;
@@ -14,11 +21,21 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.course.entity.Permission;
+import com.example.course.entity.Role;
+import com.example.course.repository.PermissionRepository;
+import com.example.course.repository.RoleRepository;
+import com.example.course.repository.UserRepository;
+import com.example.course.service.UserService;
+import com.example.course.util.constant.PermissionEnum;
+import com.example.course.util.constant.RoleEnum;
+
 @Configuration
 public class ApplicationInit {
     @Bean
     @Autowired
-    ApplicationRunner applicationRunner(UserService userService, RoleRepository roleRepository, PermissionRepository permissionRepository) {
+    ApplicationRunner applicationRunner(UserService userService, RoleRepository roleRepository,
+            PermissionRepository permissionRepository) {
         return new ApplicationRunner() {
             @Override
             public void run(ApplicationArguments args) throws Exception {
@@ -32,7 +49,8 @@ public class ApplicationInit {
                 // Add permissions if they don't exist
                 for (PermissionEnum permissionEnum : PermissionEnum.values()) {
                     if (!permissionRepository.existsByPermissionName(permissionEnum.getPermissionName())) {
-                        permissionRepository.save(Permission.builder().permissionName(permissionEnum.getPermissionName()).build());
+                        permissionRepository
+                                .save(Permission.builder().permissionName(permissionEnum.getPermissionName()).build());
                     }
                 }
 

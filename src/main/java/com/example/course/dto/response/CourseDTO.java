@@ -15,15 +15,17 @@ import java.util.List;
 @Getter
 public class CourseDTO {
     private Long courseId;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy/MM/dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy/MM/dd'T'HH:mm:ss")
     private LocalDateTime updatedDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate startDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDate endDate;
     private List<LecturerDTO> lecturers;
+//    private List<StudentInCreateCourseDTO> students;
+    private List<ScheduleDTO> schedules;
     private Long numberOfStudents;
     private Subject subject;
     public CourseDTO() {}

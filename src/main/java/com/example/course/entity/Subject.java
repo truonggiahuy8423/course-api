@@ -1,6 +1,5 @@
 package com.example.course.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +34,10 @@ public class Subject {
     @Column(name = "updated_date", nullable = false)
     @CreationTimestamp
     private LocalDateTime updatedDate;
+
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
 
     // Relation "One"
     @JsonIgnore

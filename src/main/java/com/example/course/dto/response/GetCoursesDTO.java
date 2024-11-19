@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-public class GetCourseDTO {
+public class GetCoursesDTO {
     List<CourseDTO> courses;
     Integer total;
 }

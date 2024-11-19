@@ -18,7 +18,7 @@ public class CourseSchedule {
     @Id
     @Column(name = "course_schedule_id", columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long classScheduleId;
+    private Long courseScheduleId;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreationTimestamp
@@ -36,12 +36,12 @@ public class CourseSchedule {
     @CreationTimestamp
     private LocalDateTime endTime;
 
-    //Relation "One"
+    // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "courseSchedule")
     private List<Attendance> attendances;
 
-    //Relation "Many"
+    // Relation "Many"
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "room_id")

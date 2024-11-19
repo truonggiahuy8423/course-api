@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -31,8 +32,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
             "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
     List<CourseCardDTO> getAllCourseCards();
+    @Query("SELECT new com.example.course.dto.response.CourseDTO(" +
+            "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, COUNT(s), c.subject) " +
+            "FROM Course c " +
+            "LEFT JOIN c.students s " +
+            "WHERE c.courseId = :courseId " +
+            "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, c.subject"
+    )
+    Optional<CourseDTO> getCourseById(Long courseId);
+
     @Override
     List<Course> findAll();
+
+
 
     //    @Query("SELECT " +
 //            "c.courseId, c.createdDate,  c.updatedDate, c.startDate, c.endDate, " +

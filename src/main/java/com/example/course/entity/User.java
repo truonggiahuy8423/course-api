@@ -1,6 +1,7 @@
 package com.example.course.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,6 +50,7 @@ public class User {
     @Column(name = "gender")
     private Boolean gender; // Female true - Male fale
 
+    @Nullable
     @Column(name = "date_of_birth")
     private LocalDate dob;
 
@@ -56,7 +58,8 @@ public class User {
     private String countryCode;
 
     @Lob
-    @Column(name = "avatar")
+    @Nullable
+    @Column(name = "avatar", columnDefinition = "LONGBLOB")
     private byte[] avatar;
 
     // Relation "One"
@@ -88,6 +91,7 @@ public class User {
     @OneToMany(mappedBy = "receiver")
     private List<PrivateMessage> receivedPrivateMessage;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "administrator_id", referencedColumnName = "administrator_id")
     private Administrator administrator;
@@ -104,4 +108,3 @@ public class User {
 
 
 }
-

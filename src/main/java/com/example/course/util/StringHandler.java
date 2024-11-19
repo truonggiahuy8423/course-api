@@ -15,7 +15,8 @@ public class StringHandler {
             if (Character.isDigit(c)) {
                 numberBuilder.append(c); // Thêm số vào StringBuilder
             } else {
-                // Nếu đã tìm thấy số và gặp ký tự không phải là số, kiểm tra xem có cần tăng số đếm hay không
+                // Nếu đã tìm thấy số và gặp ký tự không phải là số, kiểm tra xem có cần tăng số
+                // đếm hay không
                 if (numberBuilder.length() > 0) {
                     count++;
                     if (count > n) {

@@ -1,6 +1,7 @@
 package com.example.course.repository;
 
 import com.example.course.dto.response.LecturerDTO;
+import com.example.course.dto.response.LecturerInCreateCourseDTO;
 import com.example.course.entity.Lecturer;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,15 @@ public interface LecturerRepository extends JpaRepository<Lecturer, Long> {
             "LEFT JOIN lec.user u " +
             "WHERE c.courseId = :courseId ")
     List<LecturerDTO> findByCourseId(Long courseId);
+
+    @Query("SELECT new com.example.course.dto.response.LecturerInCreateCourseDTO(" +
+            "lec.lecturerId, u.userId, u.username, u.email, u.gender, u.dob, u.lastAccess, u.avatar) " +
+            "FROM Lecturer lec " +
+            "LEFT JOIN lec.user u ")
+    List<LecturerInCreateCourseDTO> findLecturers(Pageable pageable);
+
+    @Override
+    List<Lecturer> findAll();
     @Query("SELECT new com.example.course.dto.response.LecturerDTO(" +
             "l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar) " +
             "FROM Lecturer l " +
