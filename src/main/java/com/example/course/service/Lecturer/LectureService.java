@@ -31,7 +31,7 @@ public class LectureService implements ILectureService {
 
         // Tạo thực thể User mới từ thông tin payload
         User user = new User();
-        user.setLecturer(savedLecturer); // Liên kết Lecturer với User
+        user.setLecturer(savedLecturer);
         user.setUsername(lecturerPayload.getUser().getUsername());
         user.setEmail(lecturerPayload.getUser().getEmail());
         user.setGender(lecturerPayload.getUser().getGender());
@@ -100,12 +100,8 @@ public class LectureService implements ILectureService {
         AppResponse<Lecturer> response = new AppResponse<>();
         try {
             if (lecturerRepository.existsById(lecturer.getLecturerId())) {
-                // Xóa tất cả User có lecturer_id liên quan
                 userRepository.deleteByLecturerId(lecturer.getLecturerId());
-
-                // Xóa Lecturer
                 lecturerRepository.deleteById(lecturer.getLecturerId());
-
                 response.setMessage("Lecturer deleted successfully");
                 response.setData(lecturer);
             } else {
