@@ -14,7 +14,7 @@ public class RegisterResponse {
     private String username;
     private String email;
     private String phone;
-    private Boolean gender; // Female true - Male fale
+    private Boolean gender;
     private LocalDate dob;
     private String countryCode;
 }

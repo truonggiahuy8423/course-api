@@ -1,5 +1,12 @@
 package com.example.course.service;
 
+import com.example.course.dto.response.CourseCardDTO;
+import com.example.course.dto.response.CourseDTO;
+import com.example.course.dto.response.GetCoursesDTO;
+import com.example.course.dto.response.LecturerDTO;
+import com.example.course.entity.Lecturer;
+import com.example.course.repository.CourseRepository;
+import com.example.course.repository.LecturerRepository;
 import com.example.course.dto.request.CreateCourseRequest;
 import com.example.course.dto.response.*;
 import com.example.course.entity.*;
@@ -19,6 +26,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 //import static java.util.stream.Nodes.collect;
@@ -31,6 +42,9 @@ public class CourseService {
 
     @Autowired
     private LecturerRepository lecturerRepository;
+    public List<CourseDTO> getAllCourses(int page, int size) {
+        return courseRepository.getCourses(PageRequest.of(page, size));
+    }
     @Autowired
     private SubjectRepository subjectRepository;
     @Autowired
@@ -108,17 +122,29 @@ public class CourseService {
         return new GetStudentsDTO(students, total);
     }
 
-    public GetStudentsDTO getStudentsByCourseId(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
-        String sortAttr = getSortAttributeStudents(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        public GetStudentsDTO getStudentsByCourseId(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
+            String sortAttr = getSortAttributeStudents(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+            Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+            List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
+            Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
+            return new GetStudentsDTO(students, total);
+        }
+
+    public GetStudentNotInCourse getStudentsNotInCourse(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttributeStudents(sort);
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
 
-        List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
-        Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
-        return new GetStudentsDTO(students, total);
+        // Lấy danh sách sinh viên không tham gia khóa học
+        List<StudentNotInCourseDTO> students = courseStudentRepository.findStudentsNotInCourse(courseId, pageable);
+
+        // Tổng số sinh viên không tham gia khóa học
+        Integer total = courseStudentRepository.countStudentsNotInCourse(courseId);
+
+        return new GetStudentNotInCourse(students, total);
     }
-
-
 
     public GetRoomsDTO getRooms(Integer page, Integer pageSize, String sort, String sortDir) {
         String sortAttr = getSortAttributeRooms(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
@@ -131,7 +157,7 @@ public class CourseService {
     }
 
 
-    // Hàm lấy thuộc tính sắp xếp
+
     private String getSortAttribute(String sort) {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "c.courseId");
@@ -329,5 +355,22 @@ public class CourseService {
     public List<Object[]> test(Integer page_index, Integer limit) {
         Pageable pageable = PageRequest.of(page_index - 1, limit); // Trang đầu tiên, 5 kết quả
         return courseRepository.test(pageable);
+    }
+
+    public List<CourseCardDTO> getAllCourseCards() {
+        List<CourseCardDTO> courses = courseRepository.getAllCourseCards();
+
+        courses.forEach(course -> {
+            // Tính duration theo số tháng giữa startDate và endDate
+            long months = ChronoUnit.MONTHS.between(course.getStartDate(), course.getEndDate());
+            course.setDuration(months + " tháng");
+            List<LecturerDTO> lecturers = getLecturersByCourseId(course.getCourseId());
+            String lecturerNames = lecturers.stream()
+                    .map(LecturerDTO::getUsername) // Sử dụng đúng getter
+                    .collect(Collectors.joining(", "));
+            course.setAuthor(lecturerNames); // Gán tên giảng viên vào CourseCardDTO
+        });
+
+        return courses;
     }
 }

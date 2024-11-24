@@ -1,5 +1,8 @@
 package com.example.course.controller;
 
+import com.example.course.dto.response.CourseCardDTO;
+import com.example.course.dto.response.CourseDTO;
+import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.request.CreateCourseRequest;
 import com.example.course.dto.response.*;
 import com.example.course.service.CourseService;
@@ -128,5 +131,25 @@ public class CourseController {
                 ApiMessage.SUCCESS, "Null"), HttpStatus.OK);    }
 
 
+    @PostMapping("/cards")
+    public ResponseEntity<List<CourseCardDTO>> getAllCourseCards() {
+        List<CourseCardDTO> courseCards = courseService.getAllCourseCards();
+        return ResponseEntity.ok(courseCards);
+    }
+
+    @GetMapping("/get-students-not-in-course")
+    public ResponseEntity<AppResponse<GetStudentNotInCourse>> getStudentsNotInCourse(
+            @RequestParam(value = "courseId") Long courseId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "1") String sort,
+            @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        GetStudentNotInCourse result = courseService.getStudentsNotInCourse(courseId, page, pageSize, sort, sortDir);
+        return new ResponseEntity<>(
+                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, result),
+                HttpStatus.OK
+        );
+    }
 
 }

@@ -100,8 +100,11 @@ public class User {
     @JoinColumn(name = "student_id", referencedColumnName = "student_id")
     private Student student;
 
+    @Setter
+    @Getter
     @OneToOne
     @JoinColumn(name = "lecturer_id", referencedColumnName = "lecturer_id")
     private Lecturer lecturer;
+
 
 }

@@ -27,4 +27,12 @@ public interface LecturerRepository extends JpaRepository<Lecturer, Long> {
 
     @Override
     List<Lecturer> findAll();
+    @Query("SELECT new com.example.course.dto.response.LecturerDTO(" +
+            "l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar) " +
+            "FROM Lecturer l " +
+            "LEFT JOIN l.user u " +
+            "GROUP BY l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar")
+    List<LecturerDTO> getLecturers(Pageable pageable);
+
+
 }
