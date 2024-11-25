@@ -5,13 +5,18 @@ import com.example.course.entity.Lecturer;
 import com.example.course.entity.User;
 import com.example.course.repository.LecturerRepository;
 import com.example.course.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +25,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class LectureService implements ILectureService {
+    @Autowired
     private final LecturerRepository lecturerRepository;
     private final UserRepository userRepository;
 
@@ -53,21 +59,14 @@ public class LectureService implements ILectureService {
                 user.getEmail(),
                 user.getGender(),
                 user.getCreatedDate(),
-                user.getUpdatedDate()
-        );
+                user.getUpdatedDate());
 
         return new AppResponse<>(201, "Lecturer added successfully", lecturerDTO);
     }
 
-
-
-
-
     public List<LecturerDTO> getAllLecturers(int page, int size) {
         return lecturerRepository.getLecturers(PageRequest.of(page, size));
     }
-
-
 
     public GetLecturerDTO getAllLecture(Integer page, Integer pageSize, String sort, String sortDir) {
         String sortAttr = getSortAttribute(sort);
@@ -87,7 +86,8 @@ public class LectureService implements ILectureService {
         sortMapper.put(4, "u.lastAccess");
         sortMapper.put(5, "u.gender");
 
-        return sortMapper.getOrDefault(Integer.valueOf(sort), "l.lecturerId"); // Mặc định là "lecturerId" nếu giá trị không hợp lệ
+        return sortMapper.getOrDefault(Integer.valueOf(sort), "l.lecturerId"); // Mặc định là "lecturerId" nếu giá trị
+                                                                               // không hợp lệ
     }
 
     @Override
@@ -113,5 +113,35 @@ public class LectureService implements ILectureService {
         return response;
     }
 
+    public StudentResponse findLecturerWithCourses(Long LecturerId) {
+        List<Object[]> results = lecturerRepository.findLecturerWithCourses(studentId);
+
+        if (results.isEmpty()) {
+            throw new EntityNotFoundException("Student not found with ID: " + studentId);
+        }
+
+        Object[] firstRow = results.get(0);
+        LecturerResponse lecturerResponse = new LecturerResponse(
+                (Long) firstRow[0], // lecturerId
+                (Long) firstRow[1], // userId
+                (String) firstRow[2], // username
+                (String) firstRow[3], // email
+                (Boolean) firstRow[4], // gender
+                (LocalDate) firstRow[5], // dob
+                null // Placeholder for courses
+        );
+
+        // Map courses
+        List<StudentCourseResponse> courses = results.stream()
+                .map(row -> new StudentCourseResponse(
+                        (Long) row[6], // courseId
+                        (LocalDate) row[7], // startDate
+                        (LocalDate) row[8] // endDate
+                ))
+                .toList();
+
+        studentResponse.setStudentCourse(courses);
+        return studentResponse;
+    }
 
 }
