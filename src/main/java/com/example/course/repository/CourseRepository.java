@@ -1,5 +1,6 @@
 package com.example.course.repository;
 
+import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.entity.Course;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,16 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     )
     Optional<CourseDTO> getCourseById(Long courseId);
 
+
+    @Query("SELECT new com.example.course.dto.response.CourseCardDTO(" +
+            "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
+            "COUNT(s), c.subject, c.price, c.thumbnail, " +
+            "c.subject.subjectName, c.subject.description) " +
+            "FROM Course c " +
+            "LEFT JOIN c.students s " +
+            "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
+            "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
+    List<CourseCardDTO> getAllCourseCards();
     @Override
     List<Course> findAll();
 

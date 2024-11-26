@@ -18,7 +18,7 @@ public class Lecturer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lecturerId;
 
-    @OneToOne(mappedBy = "lecturer")
+    @OneToOne(mappedBy = "lecturer", cascade = CascadeType.PERSIST)
     private User user;
 
     // Relation "One"
@@ -37,4 +37,6 @@ public class Lecturer {
     @JsonIgnore
     @OneToMany(mappedBy = "lecturer")
     private List<CourseLecturer> courses;
+
+
 }
