@@ -330,4 +330,32 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page_index - 1, limit); // Trang đầu tiên, 5 kết quả
         return courseRepository.test(pageable);
     }
+
+    @Transactional
+    public Course updateCourse(Long courseId, UpdateCourseRequest updateCourseRequest) {
+        // Tìm khóa học theo ID
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) {
+            return null; // Không tìm thấy khóa học
+        }
+
+        // Cập nhật thông tin khóa học
+        if (updateCourseRequest.getSubjectId() != null) {
+            Subject subject = subjectRepository.findById(updateCourseRequest.getSubjectId()).orElse(null);
+            if (subject != null) {
+                course.setSubject(subject);
+            }
+        }
+
+        if (updateCourseRequest.getStartDate() != null) {
+            course.setStartDate(updateCourseRequest.getStartDate());
+        }
+
+        if (updateCourseRequest.getEndDate() != null) {
+            course.setEndDate(updateCourseRequest.getEndDate());
+        }
+
+        // Lưu lại thông tin khóa học đã sửa
+        return courseRepository.save(course);
+    }
 }
