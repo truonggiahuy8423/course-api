@@ -113,35 +113,35 @@ public class LectureService implements ILectureService {
         return response;
     }
 
-    public StudentResponse findLecturerWithCourses(Long LecturerId) {
-        List<Object[]> results = lecturerRepository.findLecturerWithCourses(studentId);
-
-        if (results.isEmpty()) {
-            throw new EntityNotFoundException("Student not found with ID: " + studentId);
-        }
-
-        Object[] firstRow = results.get(0);
-        LecturerResponse lecturerResponse = new LecturerResponse(
-                (Long) firstRow[0], // lecturerId
-                (Long) firstRow[1], // userId
-                (String) firstRow[2], // username
-                (String) firstRow[3], // email
-                (Boolean) firstRow[4], // gender
-                (LocalDate) firstRow[5], // dob
-                null // Placeholder for courses
-        );
-
-        // Map courses
-        List<StudentCourseResponse> courses = results.stream()
-                .map(row -> new StudentCourseResponse(
-                        (Long) row[6], // courseId
-                        (LocalDate) row[7], // startDate
-                        (LocalDate) row[8] // endDate
-                ))
-                .toList();
-
-        studentResponse.setStudentCourse(courses);
-        return studentResponse;
-    }
+//    public StudentResponse findLecturerWithCourses(Long LecturerId) {
+//        List<Object[]> results = lecturerRepository.findLecturerWithCourses(studentId);
+//
+//        if (results.isEmpty()) {
+//            throw new EntityNotFoundException("Student not found with ID: " + studentId);
+//        }
+//
+//        Object[] firstRow = results.get(0);
+//        LecturerResponse lecturerResponse = new LecturerResponse(
+//                (Long) firstRow[0], // lecturerId
+//                (Long) firstRow[1], // userId
+//                (String) firstRow[2], // username
+//                (String) firstRow[3], // email
+//                (Boolean) firstRow[4], // gender
+//                (LocalDate) firstRow[5], // dob
+//                null // Placeholder for courses
+//        );
+//
+//        // Map courses
+//        List<StudentCourseResponse> courses = results.stream()
+//                .map(row -> new StudentCourseResponse(
+//                        (Long) row[6], // courseId
+//                        (LocalDate) row[7], // startDate
+//                        (LocalDate) row[8] // endDate
+//                ))
+//                .toList();
+//
+//        studentResponse.setStudentCourse(courses);
+//        return studentResponse;
+//    }
 
 }

@@ -7,6 +7,7 @@ import com.example.course.entity.Category;
 import com.example.course.entity.Course;
 import com.example.course.entity.Subject;
 import com.example.course.repository.CategoryRepository;
+import com.example.course.repository.CourseRepository;
 import com.example.course.repository.SubjectRepository;
 
 import jakarta.transaction.Transactional;
@@ -22,6 +23,8 @@ public class SubjectService implements ISubjectService {
     private final SubjectRepository subjectRepository;
 
     private final CategoryRepository categoryRepository;
+
+    private final CourseRepository courseRepository;
 
     @Override
     public AppResponse<Subject> addSubject(Subject subject) {

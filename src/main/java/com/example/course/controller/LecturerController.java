@@ -7,6 +7,7 @@ import com.example.course.dto.response.LecturerUserDTO;
 import com.example.course.dto.response.StudentResponse;
 import com.example.course.entity.Lecturer;
 import com.example.course.service.Lecturer.LectureService;
+import com.example.course.service.StudentService;
 import com.example.course.util.ApiMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class LecturerController {
 
     @Autowired
     private final LectureService lectureService;
+
+    @Autowired
+    private final StudentService studentService;
 
     @GetMapping("/get-lectures")
     public ResponseEntity<AppResponse<GetLecturerDTO>> getLecturers(

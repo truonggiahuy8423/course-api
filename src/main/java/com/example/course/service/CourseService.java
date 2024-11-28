@@ -18,7 +18,7 @@ import com.example.course.util.constant.ExceptionType;
 import jakarta.transaction.Transactional;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
-import com.example.course.dto.response.GetCourseDTO;
+import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.response.LecturerDTO;
 import com.example.course.entity.Lecturer;
 import com.example.course.repository.CourseRepository;
@@ -64,7 +64,7 @@ public class CourseService {
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
     }
-    public GetCourseDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
+    public GetCoursesDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
         // Tạo Pageable từ các tham số được truyền vào
         String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;

@@ -4,7 +4,7 @@ import com.example.course.dto.request.CreateCourseRequest;
 import com.example.course.dto.response.*;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
-import com.example.course.dto.response.GetCourseDTO;
+import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
@@ -163,25 +163,25 @@ public class CourseController {
                                 HttpStatus.OK);
         }
 
-        @PutMapping("/update-course")
-        public ResponseEntity<AppResponse<Course>> updateCourse(
-                        @RequestParam(value = "courseId") Long courseId,
-                        @RequestBody UpdateCourseRequest updateCourseRequest) {
-
-                Course updatedCourse = courseService.updateCourse(courseId, updateCourseRequest);
-
-                // if (updatedCourse == null) {
-                // return new ResponseEntity<>(new AppResponse<Course>(
-                // HttpStatus.BAD_REQUEST.value(),
-                // ApiMessage.FAIL,
-                // null), HttpStatus.BAD_REQUEST);
-                // }
-
-                return new ResponseEntity<>(new AppResponse<Course>(
-                                HttpStatus.OK.value(),
-                                ApiMessage.SUCCESS,
-                                updatedCourse), HttpStatus.OK);
-        }
+//        @PutMapping("/update-course")
+//        public ResponseEntity<AppResponse<Course>> updateCourse(
+//                        @RequestParam(value = "courseId") Long courseId,
+//                        @RequestBody UpdateCourseRequest updateCourseRequest) {
+//
+//                Course updatedCourse = courseService.updateCourse(courseId, updateCourseRequest);
+//
+//                // if (updatedCourse == null) {
+//                // return new ResponseEntity<>(new AppResponse<Course>(
+//                // HttpStatus.BAD_REQUEST.value(),
+//                // ApiMessage.FAIL,
+//                // null), HttpStatus.BAD_REQUEST);
+//                // }
+//
+//                return new ResponseEntity<>(new AppResponse<Course>(
+//                                HttpStatus.OK.value(),
+//                                ApiMessage.SUCCESS,
+//                                updatedCourse), HttpStatus.OK);
+//        }
 
         @GetMapping("/test-role")
         public ResponseEntity<AppResponse<String>> testRole() {
