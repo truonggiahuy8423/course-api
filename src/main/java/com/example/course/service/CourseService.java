@@ -1,6 +1,7 @@
 package com.example.course.service;
 
 import com.example.course.dto.request.UpdateStudentRequest;
+import com.example.course.dto.request.UpdateCourseRequest;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
