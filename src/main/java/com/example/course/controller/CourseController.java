@@ -5,11 +5,13 @@ import com.example.course.dto.response.*;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
+import com.example.course.dto.request.UpdateStudentRequest;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.request.CreateCourseRequest;
 import com.example.course.dto.response.*;
+import com.example.course.exception.AppRuntimeException;
 import com.example.course.service.CourseService;
 import com.example.course.util.ApiMessage;
 import java.util.List;
@@ -213,5 +215,50 @@ public class CourseController {
                 HttpStatus.OK
         );
     }
+
+    @PostMapping("/update-student-in-courses")
+    public ResponseEntity<AppResponse<String>> updateStudentInCourses(@RequestBody UpdateStudentRequest updateStudentRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        try {
+            // Lấy courseId từ updateStudentRequest, mà không cần chuyển đổi
+            Long courseId = Long.valueOf(updateStudentRequest.getCourseId());  // courseId là kiểu Long rồi
+
+            // Gọi service để cập nhật sinh viên trong khóa học
+            courseService.updateStudentInCourse(updateStudentRequest);
+
+            // Trả về phản hồi thành công
+            return new ResponseEntity<>(
+                    new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, "Students updated successfully in the course."),
+                    HttpStatus.OK
+            );
+        } catch (AppRuntimeException e) {
+            // Trong trường hợp có lỗi đã biết (ngoại lệ tùy chỉnh), trả về thông báo cụ thể
+            return new ResponseEntity<>(
+                    new AppResponse<>(HttpStatus.BAD_REQUEST.value(), ApiMessage.FAILED, "Error: " + e.getMessage()),
+                    HttpStatus.BAD_REQUEST
+            );
+        } catch (Exception e) {
+            // Trong trường hợp có lỗi không xác định, ghi log và trả về thông báo lỗi chung
+            return new ResponseEntity<>(
+                    new AppResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ApiMessage.FAILED, "An unexpected error occurred while updating students in the course."),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    @GetMapping("/get-student-not-pageable")
+    public ResponseEntity<AppResponse<List<StudentInCreateCourseDTO>>> getStudentNotPageable(
+            @RequestParam(value = "courseId") Long courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Lấy dữ liệu từ service
+        GetStudentsDTO responseDTO = courseService.getAllStudentsByCourseId(courseId);
+        List<StudentInCreateCourseDTO> students = responseDTO.getStudents(); // Lấy danh sách sinh viên từ GetStudentsDTO
+        return new ResponseEntity<>(
+                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, students),
+                HttpStatus.OK);
+    }
+
+
 
 }
