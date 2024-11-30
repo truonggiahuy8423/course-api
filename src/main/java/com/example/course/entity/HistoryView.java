@@ -17,8 +17,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class HistoryView {
-    @EmbeddedId
-    private HistoryId id;
+    @Id
+    @Column(name = "history_id", columnDefinition = "BIGINT")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long historyId;
     // Relation "One"
 
     // Relation "Many"
