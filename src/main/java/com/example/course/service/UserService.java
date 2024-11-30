@@ -101,7 +101,7 @@ public class UserService {
         LoginResponse loginResponse = new LoginResponse();
         if (passwordEncoder.matches(loginByEmailRequest.getPassword(), user.getPassword())) {
             userMapper.mapUserToLoginResponse(loginResponse, user);
-
+            loginResponse.setRole(user.getRoles().getFirst().getRole().getRoleName());
             try {
                 loginResponse.setToken(JwtProvider.generateToken(user));
             } catch (JOSEException exception) {
