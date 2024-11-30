@@ -4,8 +4,10 @@ import com.example.course.dto.response.AppResponse;
 import com.example.course.dto.response.GetLecturerDTO;
 import com.example.course.dto.response.LecturerDTO;
 import com.example.course.dto.response.LecturerUserDTO;
+import com.example.course.dto.response.StudentResponse;
 import com.example.course.entity.Lecturer;
 import com.example.course.service.Lecturer.LectureService;
+import com.example.course.service.StudentService;
 import com.example.course.util.ApiMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class LecturerController {
     @Autowired
     private final LectureService lectureService;
 
+    @Autowired
+    private final StudentService studentService;
+
     @GetMapping("/get-lectures")
     public ResponseEntity<AppResponse<GetLecturerDTO>> getLecturers(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -28,8 +33,7 @@ public class LecturerController {
             @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
         GetLecturerDTO lecturers = lectureService.getAllLecture(page, pageSize, sort, sortDir);
         return ResponseEntity.ok(
-                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, lecturers)
-        );
+                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, lecturers));
     }
 
     /**
@@ -43,12 +47,10 @@ public class LecturerController {
 
         if ("Lecturer deleted successfully".equals(response.getMessage())) {
             return ResponseEntity.ok(
-                    new AppResponse<>(HttpStatus.OK.value(), response.getMessage(), null)
-            );
+                    new AppResponse<>(HttpStatus.OK.value(), response.getMessage(), null));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    new AppResponse<>(HttpStatus.BAD_REQUEST.value(), response.getMessage(), null)
-            );
+                    new AppResponse<>(HttpStatus.BAD_REQUEST.value(), response.getMessage(), null));
         }
     }
 
@@ -68,6 +70,15 @@ public class LecturerController {
             // Trả về phản hồi thất bại với mã trạng thái 400 (Bad Request)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<AppResponse<StudentResponse>> findStudentWithCourses(
+            @RequestParam(value = "studentId") Long studentId) {
+        return new ResponseEntity<AppResponse<StudentResponse>>(
+                new AppResponse<StudentResponse>(HttpStatus.OK.value(), ApiMessage.SUCCESS,
+                        studentService.findStudentWithCourses(studentId)),
+                HttpStatus.OK);
     }
 
 }

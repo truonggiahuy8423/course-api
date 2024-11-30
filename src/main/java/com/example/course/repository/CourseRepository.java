@@ -22,6 +22,15 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             )
     List<CourseDTO> getCourses(Pageable pageable);
 
+    @Query("SELECT new com.example.course.dto.response.CourseDTO(" +
+            "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, COUNT(s), c.subject) " +
+            "FROM Course c " +
+            "LEFT JOIN c.students s " +
+            "WHERE c.courseId = :courseId " +
+            "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, c.subject"
+    )
+    Optional<CourseDTO> getCourseById(Long courseId);
+
 
     @Query("SELECT new com.example.course.dto.response.CourseCardDTO(" +
             "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
@@ -32,15 +41,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
             "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
     List<CourseCardDTO> getAllCourseCards();
-    @Query("SELECT new com.example.course.dto.response.CourseDTO(" +
-            "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, COUNT(s), c.subject) " +
-            "FROM Course c " +
-            "LEFT JOIN c.students s " +
-            "WHERE c.courseId = :courseId " +
-            "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, c.subject"
-    )
-    Optional<CourseDTO> getCourseById(Long courseId);
-
     @Override
     List<Course> findAll();
 
