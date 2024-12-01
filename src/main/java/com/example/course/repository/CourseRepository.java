@@ -41,6 +41,19 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
             "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
     List<CourseCardDTO> getAllCourseCards();
+
+    @Query("SELECT new com.example.course.dto.response.CourseCardDTO(" +
+            "c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
+            "COUNT(s), c.subject, c.price, c.thumbnail, " +
+            "c.subject.subjectName, c.subject.description) " +
+            "FROM Course c " +
+            "LEFT JOIN c.students s " +
+            "WHERE c.courseId IN :courseIdList " + // Thêm điều kiện IN
+            "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
+            "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
+    List<CourseCardDTO> getCourseCardsById(@Param("courseIdList") List<Long> courseIdList);
+
+
     @Override
     List<Course> findAll();
 

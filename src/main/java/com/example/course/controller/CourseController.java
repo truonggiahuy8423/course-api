@@ -11,14 +11,18 @@ import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.request.CreateCourseRequest;
 import com.example.course.dto.response.*;
+import com.example.course.entity.HistoryView;
 import com.example.course.exception.AppRuntimeException;
 import com.example.course.service.CourseService;
 import com.example.course.util.ApiMessage;
-import java.util.List;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.example.course.util.constant.ExceptionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -41,6 +45,7 @@ import com.example.course.dto.response.GetSubjectsDTO;
 import com.example.course.entity.Course;
 import com.example.course.service.CourseService;
 import com.example.course.util.ApiMessage;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class CourseController {
@@ -98,7 +103,67 @@ public class CourseController {
                                 HttpStatus.OK);
         }
 
-        @GetMapping("/get-student-list")
+    @GetMapping("/get-recommendation")
+    public ResponseEntity<AppResponse<List<CourseCardDTO>>> getSubjectList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = Long.valueOf(authentication.getName());
+        List<HistoryView> historyViewList = courseService.getHistoryView(userId);
+        List<Long> input = historyViewList.stream().map((item) -> item.getCourse().getCourseId()).toList();
+
+        System.out.println("sizeee: " +  input.size());
+        String flaskApiUrl = "http://127.0.0.1:5000";
+        String flaskApiKey = "your_secret_api_key";
+
+
+        String url = flaskApiUrl + "/predict?apiKey=" + flaskApiKey;
+
+        // Tạo RestTemplate
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Tạo dữ liệu gửi (mảng 5 phần tử)
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("data", input);
+
+        // Tạo HTTP request với Content-Type: application/json
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // Gửi HTTP POST đến Flask API
+            ResponseEntity<Map> responseEntity = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Map.class
+            );
+
+            System.out.println("111111");
+
+            // Kiểm tra phản hồi
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                // Lấy kết quả dự đoán
+                System.out.println("2222");
+                Map<String, Object> responseBody = responseEntity.getBody();
+                List<Long> prediction = (List<Long>)responseBody.get("prediction");
+
+                // Trả về kết quả với trạng thái OK
+                return new ResponseEntity<AppResponse<List<CourseCardDTO>>>(
+                        new AppResponse<List<CourseCardDTO>>(HttpStatus.OK.value(),
+                                ApiMessage.SUCCESS,
+                                courseService.getCourseCardsById(prediction)),
+                        HttpStatus.OK);
+            } else {
+                throw new AppRuntimeException(ExceptionType.INTERNAL_SERVER_ERROR, "Recommendation Server Error2");
+            }
+        } catch (Exception e) {
+            // Xử lý ngoại lệ và trả về lỗi
+            throw new AppRuntimeException(ExceptionType.INTERNAL_SERVER_ERROR, "Recommendation Server Error " + e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/get-student-list")
         public ResponseEntity<AppResponse<GetStudentsDTO>> getStudentList(
                         @RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,

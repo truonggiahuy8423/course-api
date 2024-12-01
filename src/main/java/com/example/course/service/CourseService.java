@@ -63,6 +63,9 @@ public class CourseService {
     private CourseLecturerRepository courseLecturerRepository;
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
+    @Autowired
+    private HistoryViewRepository historyViewRepository;
+
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
     }
@@ -410,6 +413,23 @@ public class CourseService {
         return courses;
     }
 
+    public List<CourseCardDTO> getCourseCardsById(List<Long> courseIdList) {
+        List<CourseCardDTO> courses = courseRepository.getCourseCardsById(courseIdList);
+
+        courses.forEach(course -> {
+            // Tính duration theo số tháng giữa startDate và endDate
+            long months = ChronoUnit.MONTHS.between(course.getStartDate(), course.getEndDate());
+            course.setDuration(months + " tháng");
+            List<LecturerDTO> lecturers = getLecturersByCourseId(course.getCourseId());
+            String lecturerNames = lecturers.stream()
+                    .map(LecturerDTO::getUsername) // Sử dụng đúng getter
+                    .collect(Collectors.joining(", "));
+            course.setAuthor(lecturerNames); // Gán tên giảng viên vào CourseCardDTO
+        });
+
+        return courses;
+    }
+
 
     public void updateStudentInCourse(UpdateStudentRequest request) {
         if (request.getCourseId() == null || request.getStudentIds() == null || request.getStudentIds().isEmpty()) {
@@ -495,5 +515,10 @@ public class CourseService {
         List<StudentInCreateCourseDTO> students = courseStudentRepository.findByStudentCourseId(courseId);
         Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
         return new GetStudentsDTO(students, total);
+    }
+
+    public List<HistoryView> getHistoryView(Long userId) {
+        Pageable pageable = PageRequest.of(0, 5); // Trang đầu tiên, 5 kết quả
+        return historyViewRepository.getHistoryViewsByUserId(userId, pageable);
     }
 }
