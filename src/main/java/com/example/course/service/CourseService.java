@@ -410,7 +410,7 @@ public class CourseService {
             course.setAuthor(lecturerNames); // Gán tên giảng viên vào CourseCardDTO
         });
 
-        return new GetCourseCardDTO(courses, courses.size());
+        return new GetCourseCardDTO(courses, courseRepository.findAll().size());
     }
 
 

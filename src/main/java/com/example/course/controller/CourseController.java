@@ -81,7 +81,7 @@ public class CourseController {
         @GetMapping("/cards")
         public ResponseEntity<AppResponse<GetCourseCardDTO>> getAllCourseCards(
                 @RequestParam(value = "page", defaultValue = "1") int page,
-                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                @RequestParam(value = "pageSize", defaultValue = "12") int pageSize,
                 @RequestParam(value = "sort", defaultValue = "1") String sort,
                 @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir
         ) {
