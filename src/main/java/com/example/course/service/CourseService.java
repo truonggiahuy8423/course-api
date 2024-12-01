@@ -396,9 +396,12 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public List<CourseCardDTO> getAllCourseCards() {
-        List<CourseCardDTO> courses = courseRepository.getAllCourseCards();
+    public GetCourseCardDTO getAllCourseCards(Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
 
+        List<CourseCardDTO> courses = courseRepository.getAllCourseCards(pageable);
         courses.forEach(course -> {
             // Tính duration theo số tháng giữa startDate và endDate
             long months = ChronoUnit.MONTHS.between(course.getStartDate(), course.getEndDate());
@@ -410,7 +413,7 @@ public class CourseService {
             course.setAuthor(lecturerNames); // Gán tên giảng viên vào CourseCardDTO
         });
 
-        return courses;
+        return new GetCourseCardDTO(courses, courseRepository.findAll().size());
     }
 
     public List<CourseCardDTO> getCourseCardsById(List<Long> courseIdList) {
