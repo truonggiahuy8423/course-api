@@ -23,7 +23,7 @@ public class User {
     @Column(name = "user_id", columnDefinition = "BIGINT")
     private Long userId;
 
-    @Column(name = "usernae", columnDefinition = "VARCHAR(50)")
+    @Column(name = "username", columnDefinition = "VARCHAR(50)")
     private String username;
 
     @Column(name = "email", columnDefinition = "VARCHAR(50)")
@@ -62,8 +62,8 @@ public class User {
     @Column(name = "avatar", columnDefinition = "LONGBLOB")
     private byte[] avatar;
 
-    @Column(name = "balance", columnDefinition = "BIGINT default 0L")
-    private Long balance;
+    // @Column(name = "balance", columnDefinition = "BIGINT default 0L")
+    // private Long balance;
 
     // Relation "One"
     @JsonIgnore
