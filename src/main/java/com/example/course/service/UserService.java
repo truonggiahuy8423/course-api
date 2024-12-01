@@ -125,7 +125,8 @@ public class UserService {
         LoginResponse loginResponse = new LoginResponse();
         if (passwordEncoder.matches(loginByPhoneRequest.getPassword(), user.getPassword())) {
             userMapper.mapUserToLoginResponse(loginResponse, user);
-            String roles = String.join(" ", user.getRoles().stream().map((role) -> role.getRole().getRoleName()).toList());
+            String roles = String.join(" ",
+                    user.getRoles().stream().map((role) -> role.getRole().getRoleName()).toList());
             loginResponse.setRole(roles);
             try {
                 loginResponse.setToken(JwtProvider.generateToken(user));
