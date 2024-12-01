@@ -78,10 +78,18 @@ public class CourseController {
                                 HttpStatus.OK);
         }
 
-        @PostMapping("/cards")
-        public ResponseEntity<List<CourseCardDTO>> getAllCourseCards() {
-                List<CourseCardDTO> courseCards = courseService.getAllCourseCards();
-                return ResponseEntity.ok(courseCards);
+        @GetMapping("/cards")
+        public ResponseEntity<AppResponse<GetCourseCardDTO>> getAllCourseCards(
+                @RequestParam(value = "page", defaultValue = "1") int page,
+                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                @RequestParam(value = "sort", defaultValue = "1") String sort,
+                @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir
+        ) {
+            return new ResponseEntity<AppResponse<GetCourseCardDTO>>(
+                    new AppResponse<GetCourseCardDTO>(HttpStatus.OK.value(),
+                            ApiMessage.SUCCESS,
+                            courseService.getAllCourseCards(page, pageSize, sort, sortDir)),
+                    HttpStatus.OK);
         }
 
         @GetMapping("/get-subject-list")

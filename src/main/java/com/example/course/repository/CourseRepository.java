@@ -40,7 +40,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             "LEFT JOIN c.students s " +
             "GROUP BY c.courseId, c.createdDate, c.updatedDate, c.startDate, c.endDate, " +
             "c.subject, c.price, c.thumbnail, c.subject.subjectName, c.subject.description")
-    List<CourseCardDTO> getAllCourseCards();
+    List<CourseCardDTO> getAllCourseCards(Pageable pageable);
     @Override
     List<Course> findAll();
 
