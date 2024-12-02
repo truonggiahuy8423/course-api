@@ -18,7 +18,7 @@ public interface LecturerRepository extends JpaRepository<Lecturer, Long> {
                         "LEFT JOIN l.lecturer lec " +
                         "LEFT JOIN lec.user u " +
                         "WHERE c.courseId = :courseId ")
-        List<LecturerDTO> findByCourseId(Long courseId);
+        List<LecturerDTO> findByCourseId(@Param("courseId") Long courseId);
 
         @Query("SELECT new com.example.course.dto.response.LecturerInCreateCourseDTO(" +
                         "lec.lecturerId, u.userId, u.username, u.email, u.gender, u.dob, u.lastAccess, u.avatar) " +
@@ -36,12 +36,13 @@ public interface LecturerRepository extends JpaRepository<Lecturer, Long> {
                         "GROUP BY l.lecturerId, u.username, u.email, u.lastAccess, u.gender, u.avatar")
         List<LecturerDTO> getLecturers(Pageable pageable);
 
-//        @Query("SELECT l.lecturerId, u.userId, u.username, u.email, u.gender, u.dob, " +
-//                        "c.courseId, c.startDate, c.endDate " +
-//                        "FROM Student s " +
-//                        "LEFT JOIN s.user u " +
-//                        "LEFT JOIN s.courses cs " +
-//                        "LEFT JOIN cs.course c " +
-//                        "WHERE l.lecturerId = :lecturerId")
-//        List<Object[]> findLecturerWithCourses(@Param("lecturerId") Long lecturerId);
+        // @Query("SELECT l.lecturerId, u.userId, u.username, u.email, u.gender, u.dob,
+        // " +
+        // "c.courseId, c.startDate, c.endDate " +
+        // "FROM Student s " +
+        // "LEFT JOIN s.user u " +
+        // "LEFT JOIN s.courses cs " +
+        // "LEFT JOIN cs.course c " +
+        // "WHERE l.lecturerId = :lecturerId")
+        // List<Object[]> findLecturerWithCourses(@Param("lecturerId") Long lecturerId);
 }

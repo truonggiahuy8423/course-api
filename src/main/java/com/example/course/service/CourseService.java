@@ -8,6 +8,7 @@ import com.example.course.entity.Lecturer;
 import com.example.course.repository.CourseRepository;
 import com.example.course.repository.LecturerRepository;
 import com.example.course.dto.request.CreateCourseRequest;
+import com.example.course.dto.request.UpdateCourseRequest;
 import com.example.course.dto.response.*;
 import com.example.course.entity.*;
 import com.example.course.entity.composite.CourseLecturerId;
@@ -61,9 +62,11 @@ public class CourseService {
     private CourseLecturerRepository courseLecturerRepository;
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
+
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
     }
+
     public GetCoursesDTO getCourses(Integer page, Integer pageSize, String sort, String sortDir) {
         // Tạo Pageable từ các tham số được truyền vào
         String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
@@ -77,11 +80,39 @@ public class CourseService {
         return new GetCoursesDTO(res, courseRepository.findAll().size());
     }
 
+    public GetCoursesDTO getCoursesByStudent(Integer page, Integer pageSize, String sort, String sortDir,
+            Long studentId) {
+        // Tạo Pageable từ các tham số được truyền vào
+        String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<CourseDTO> res = courseRepository.getCoursesByStudent(pageable, studentId);
+        res = res.stream()
+                .peek(courseDTO -> courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId())))
+                .toList();
+        return new GetCoursesDTO(res, courseRepository.findAll().size());
+    }
+
+    public GetCoursesDTO getCoursesByLecturer(Integer page, Integer pageSize, String sort, String sortDir,
+            Long lecturerId) {
+        // Tạo Pageable từ các tham số được truyền vào
+        String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<CourseDTO> res = courseRepository.getCoursesByLecture(pageable, lecturerId);
+        res = res.stream()
+                .peek(courseDTO -> courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId())))
+                .toList();
+        return new GetCoursesDTO(res, courseRepository.findAll().size());
+    }
+
     public CourseDTO getCourseById(Long courseId) {
         // Tạo Pageable từ các tham số được truyền vào
         CourseDTO courseDTO = courseRepository.getCourseById(courseId).orElseThrow(
-                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND, "Course(ID: " + courseId + ") not found")
-        );
+                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND,
+                        "Course(ID: " + courseId + ") not found"));
         courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId()));
         return courseDTO;
     }
@@ -89,10 +120,10 @@ public class CourseService {
     public CourseDTO getCourseByIdWithMembers(Long courseId) {
         // Tạo Pageable từ các tham số được truyền vào
         CourseDTO courseDTO = courseRepository.getCourseById(courseId).orElseThrow(
-                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND, "Course(ID: " + courseId + ") not found")
-        );
+                () -> new AppRuntimeException(ExceptionType.ENTITY_NOT_FOUND,
+                        "Course(ID: " + courseId + ") not found"));
         courseDTO.setLecturers(getLecturersByCourseId(courseDTO.getCourseId()));
-//        courseDTO.setStudents(getLStudentsByCourseId(courseDTO.getCourseId()));
+        // courseDTO.setStudents(getLStudentsByCourseId(courseDTO.getCourseId()));
         courseDTO.setSchedules(getSchedulesByCourseId(courseDTO.getCourseId()));
 
         return courseDTO;
@@ -128,17 +159,19 @@ public class CourseService {
         return new GetStudentsDTO(students, total);
     }
 
-        public GetStudentsDTO getStudentsByCourseId(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
-            String sortAttr = getSortAttributeStudents(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
-            Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
-            Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+    public GetStudentsDTO getStudentsByCourseId(Long courseId, Integer page, Integer pageSize, String sort,
+            String sortDir) {
+        String sortAttr = getSortAttributeStudents(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
 
-            List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
-            Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
-            return new GetStudentsDTO(students, total);
-        }
+        List<StudentInCreateCourseDTO> students = courseStudentRepository.findByCourseId(courseId, pageable);
+        Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
+        return new GetStudentsDTO(students, total);
+    }
 
-    public GetStudentNotInCourse getStudentsNotInCourse(Long courseId, Integer page, Integer pageSize, String sort, String sortDir) {
+    public GetStudentNotInCourse getStudentsNotInCourse(Long courseId, Integer page, Integer pageSize, String sort,
+            String sortDir) {
         String sortAttr = getSortAttributeStudents(sort);
         Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
@@ -162,8 +195,6 @@ public class CourseService {
         return new GetRoomsDTO(rooms, total);
     }
 
-
-
     private String getSortAttribute(String sort) {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "c.courseId");
@@ -179,9 +210,9 @@ public class CourseService {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "lec.lecturerId");
         sortMapper.put(2, "u.username");
-//        sortMapper.put(3, "c.startDate");
-//        sortMapper.put(4, "c.endDate");
-//        sortMapper.put(5, "COUNT(s)");
+        // sortMapper.put(3, "c.startDate");
+        // sortMapper.put(4, "c.endDate");
+        // sortMapper.put(5, "COUNT(s)");
 
         return sortMapper.get(Integer.valueOf(sort));
     }
@@ -190,9 +221,9 @@ public class CourseService {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "s.studentId");
         sortMapper.put(2, "u.username");
-//        sortMapper.put(3, "c.startDate");
-//        sortMapper.put(4, "c.endDate");
-//        sortMapper.put(5, "COUNT(s)");
+        // sortMapper.put(3, "c.startDate");
+        // sortMapper.put(4, "c.endDate");
+        // sortMapper.put(5, "COUNT(s)");
 
         return sortMapper.get(Integer.valueOf(sort));
     }
@@ -201,9 +232,9 @@ public class CourseService {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "s.subjectId");
         sortMapper.put(2, "s.subjectName");
-//        sortMapper.put(3, "c.startDate");
-//        sortMapper.put(4, "c.endDate");
-//        sortMapper.put(5, "COUNT(s)");
+        // sortMapper.put(3, "c.startDate");
+        // sortMapper.put(4, "c.endDate");
+        // sortMapper.put(5, "COUNT(s)");
 
         return sortMapper.get(Integer.valueOf(sort));
     }
@@ -212,9 +243,9 @@ public class CourseService {
         Map<Integer, String> sortMapper = new HashMap<>();
         sortMapper.put(1, "r.roomId");
         sortMapper.put(2, "r.roomName");
-//        sortMapper.put(3, "c.startDate");
-//        sortMapper.put(4, "c.endDate");
-//        sortMapper.put(5, "COUNT(s)");
+        // sortMapper.put(3, "c.startDate");
+        // sortMapper.put(4, "c.endDate");
+        // sortMapper.put(5, "COUNT(s)");
 
         return sortMapper.get(Integer.valueOf(sort));
     }
@@ -225,14 +256,15 @@ public class CourseService {
         // Business
         Long subjectId = courseRequest.getSubjectId();
         Subject subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION, "Subject(ID: " + subjectId + ") does not exist"));
+                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                        "Subject(ID: " + subjectId + ") does not exist"));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy"); // hoặc định dạng bạn muốn
 
         Course course = Course.builder()
                 .startDate(LocalDate.parse(courseRequest.getStartDate(), formatter))
-                        .endDate(LocalDate.parse(courseRequest.getEndDate(), formatter))
-                        .subject(subject)
+                .endDate(LocalDate.parse(courseRequest.getEndDate(), formatter))
+                .subject(subject)
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .build();
@@ -243,15 +275,23 @@ public class CourseService {
 
         addLecturerToCourse(course.getCourseId(), courseRequest.getLecturerIds());
 
-        DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"); // hoặc định dạng bạn muốn
+        DateTimeFormatter formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"); // hoặc định dạng bạn
+                                                                                               // muốn
 
         Course finalCourse = course;
         List<CourseSchedule> courseScheduleList = courseRequest.getSchedules()
                 .stream().map((scheduleRequestDTO -> {
                     return CourseSchedule.builder()
-                            .course(finalCourse)  // Truyền đối tượng course vào CourseSchedule
-                            .startTime(LocalDateTime.parse(scheduleRequestDTO.getStartTime(), formatterDateTime))  // Giả sử scheduleRequestDTO có startTime
-                            .endTime(LocalDateTime.parse(scheduleRequestDTO.getEndTime(), formatterDateTime))  // Giả sử scheduleRequestDTO có endTime
+                            .course(finalCourse) // Truyền đối tượng course vào CourseSchedule
+                            .startTime(LocalDateTime.parse(scheduleRequestDTO.getStartTime(), formatterDateTime)) // Giả
+                                                                                                                  // sử
+                                                                                                                  // scheduleRequestDTO
+                                                                                                                  // có
+                                                                                                                  // startTime
+                            .endTime(LocalDateTime.parse(scheduleRequestDTO.getEndTime(), formatterDateTime)) // Giả sử
+                                                                                                              // scheduleRequestDTO
+                                                                                                              // có
+                                                                                                              // endTime
                             .createdDate(LocalDateTime.now())
                             .updatedDate(LocalDateTime.now())
                             .build();
@@ -260,14 +300,14 @@ public class CourseService {
 
         System.out.println("Courses in subject object: " + subject.getCourses().size());
 
-
         return null;
     }
 
     public void addStudentToCourse(Long courseId, List<Long> studentIds) {
         System.out.println("Course: " + courseId);
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION, "Course(ID: " + courseId + ") does not exist"));
+                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                        "Course(ID: " + courseId + ") does not exist"));
 
         List<Student> students = studentRepository.findAllById(studentIds);
 
@@ -280,9 +320,10 @@ public class CourseService {
                 .toList();
 
         if (!nonExistentIds.isEmpty()) {
-            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION, "Students(ID: " + nonExistentIds.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(", ")) + ") do not exist");
+            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                    "Students(ID: " + nonExistentIds.stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(", ")) + ") do not exist");
         }
 
         // Kiểm tra trùng lặp trước khi thêm vào courseStudentRepository
@@ -304,7 +345,8 @@ public class CourseService {
     public void addLecturerToCourse(Long courseId, List<Long> lecturerIds) {
         // Tìm khóa học từ courseId
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION, "Course(ID: " + courseId + ") does not exist"));
+                .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                        "Course(ID: " + courseId + ") does not exist"));
 
         // Tìm các giảng viên theo lecturerIds
         List<Lecturer> lecturers = lecturerRepository.findAllById(lecturerIds);
@@ -321,14 +363,18 @@ public class CourseService {
 
         // Nếu có giảng viên không tồn tại, ném ngoại lệ
         if (!nonExistentIds.isEmpty()) {
-            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION, "Lecturers(ID: " + nonExistentIds.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.joining(", ")) + ") do not exist");
+            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                    "Lecturers(ID: " + nonExistentIds.stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(", ")) + ") do not exist");
         }
 
-        // Lặp qua các giảng viên đã tìm thấy và kiểm tra xem có tồn tại mối quan hệ CourseLecturer chưa
+        // Lặp qua các giảng viên đã tìm thấy và kiểm tra xem có tồn tại mối quan hệ
+        // CourseLecturer chưa
         for (Lecturer lecturer : lecturers) {
-            CourseLecturerId courseLecturerId = new CourseLecturerId(courseId, lecturer.getLecturerId()); // Tạo id khóa học - giảng viên
+            CourseLecturerId courseLecturerId = new CourseLecturerId(courseId, lecturer.getLecturerId()); // Tạo id khóa
+                                                                                                          // học - giảng
+                                                                                                          // viên
             Optional<CourseLecturer> existingCourseLecturer = courseLecturerRepository.findById(courseLecturerId);
 
             if (existingCourseLecturer.isEmpty()) {
@@ -343,20 +389,17 @@ public class CourseService {
         }
     }
 
-
-
     public List<LecturerDTO> getLecturersByCourseId(Long courseId) {
         return lecturerRepository.findByCourseId(courseId);
     }
 
-//    public List<StudentInCreateCourseDTO> getLStudentsByCourseId(Long courseId) {
-//        return courseStudentRepository.findByCourseId(courseId);
-//    }
+    // public List<StudentInCreateCourseDTO> getLStudentsByCourseId(Long courseId) {
+    // return courseStudentRepository.findByCourseId(courseId);
+    // }
 
     public List<ScheduleDTO> getSchedulesByCourseId(Long courseId) {
         return courseScheduleRepository.findByCourseId(courseId);
     }
-
 
     public List<Object[]> test(Integer page_index, Integer limit) {
         Pageable pageable = PageRequest.of(page_index - 1, limit); // Trang đầu tiên, 5 kết quả

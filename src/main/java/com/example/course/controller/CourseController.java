@@ -37,6 +37,8 @@ import com.example.course.dto.response.GetRoomsDTO;
 import com.example.course.dto.response.GetStudentsDTO;
 import com.example.course.dto.response.GetSubjectsDTO;
 import com.example.course.entity.Course;
+import com.example.course.entity.User;
+import com.example.course.repository.UserRepository;
 import com.example.course.service.CourseService;
 import com.example.course.util.ApiMessage;
 
@@ -45,16 +47,40 @@ public class CourseController {
         @Autowired
         private CourseService courseService;
 
+        @Autowired
+        private UserRepository userRepository;
+
         @GetMapping("/get-course-list")
         public ResponseEntity<AppResponse<GetCoursesDTO>> getCourses(
                         @RequestParam(value = "page", defaultValue = "1") int page,
                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                         @RequestParam(value = "sort", defaultValue = "1") String sort,
+                        @RequestParam(value = "userId", defaultValue = "0") Long userId,
                         @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
                 System.out.println(page);
+                User user = userRepository.findById(userId).get();
+                if (user.getLecturer().getLecturerId() != null) {
+                        System.out.println(
+                                        user.getLecturer().getLecturerId());
+                        return new ResponseEntity<AppResponse<GetCoursesDTO>>(
+                                        new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
+                                                        ApiMessage.SUCCESS,
+                                                        courseService.getCoursesByLecturer(page, pageSize, sort,
+                                                                        sortDir,
+                                                                        user.getLecturer().getLecturerId())),
+                                        HttpStatus.OK);
+                }
 
+                if (user.getStudent().getStudentId() != null) {
+                        return new ResponseEntity<AppResponse<GetCoursesDTO>>(
+                                        new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
+                                                        ApiMessage.SUCCESS,
+                                                        courseService.getCoursesByStudent(page, pageSize, sort, sortDir,
+                                                                        user.getStudent().getStudentId())),
+                                        HttpStatus.OK);
+                }
                 return new ResponseEntity<AppResponse<GetCoursesDTO>>(
                                 new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
                                                 ApiMessage.SUCCESS,
@@ -163,25 +189,26 @@ public class CourseController {
                                 HttpStatus.OK);
         }
 
-//        @PutMapping("/update-course")
-//        public ResponseEntity<AppResponse<Course>> updateCourse(
-//                        @RequestParam(value = "courseId") Long courseId,
-//                        @RequestBody UpdateCourseRequest updateCourseRequest) {
-//
-//                Course updatedCourse = courseService.updateCourse(courseId, updateCourseRequest);
-//
-//                // if (updatedCourse == null) {
-//                // return new ResponseEntity<>(new AppResponse<Course>(
-//                // HttpStatus.BAD_REQUEST.value(),
-//                // ApiMessage.FAIL,
-//                // null), HttpStatus.BAD_REQUEST);
-//                // }
-//
-//                return new ResponseEntity<>(new AppResponse<Course>(
-//                                HttpStatus.OK.value(),
-//                                ApiMessage.SUCCESS,
-//                                updatedCourse), HttpStatus.OK);
-//        }
+        // @PutMapping("/update-course")
+        // public ResponseEntity<AppResponse<Course>> updateCourse(
+        // @RequestParam(value = "courseId") Long courseId,
+        // @RequestBody UpdateCourseRequest updateCourseRequest) {
+        //
+        // Course updatedCourse = courseService.updateCourse(courseId,
+        // updateCourseRequest);
+        //
+        // // if (updatedCourse == null) {
+        // // return new ResponseEntity<>(new AppResponse<Course>(
+        // // HttpStatus.BAD_REQUEST.value(),
+        // // ApiMessage.FAIL,
+        // // null), HttpStatus.BAD_REQUEST);
+        // // }
+        //
+        // return new ResponseEntity<>(new AppResponse<Course>(
+        // HttpStatus.OK.value(),
+        // ApiMessage.SUCCESS,
+        // updatedCourse), HttpStatus.OK);
+        // }
 
         @GetMapping("/test-role")
         public ResponseEntity<AppResponse<String>> testRole() {
@@ -199,19 +226,19 @@ public class CourseController {
                                 ApiMessage.SUCCESS, "Null"), HttpStatus.OK);
         }
 
-    @GetMapping("/get-students-not-in-course")
-    public ResponseEntity<AppResponse<GetStudentNotInCourse>> getStudentsNotInCourse(
-            @RequestParam(value = "courseId") Long courseId,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
-            @RequestParam(value = "sort", defaultValue = "1") String sort,
-            @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        GetStudentNotInCourse result = courseService.getStudentsNotInCourse(courseId, page, pageSize, sort, sortDir);
-        return new ResponseEntity<>(
-                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, result),
-                HttpStatus.OK
-        );
-    }
+        @GetMapping("/get-students-not-in-course")
+        public ResponseEntity<AppResponse<GetStudentNotInCourse>> getStudentsNotInCourse(
+                        @RequestParam(value = "courseId") Long courseId,
+                        @RequestParam(value = "page", defaultValue = "1") int page,
+                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                        @RequestParam(value = "sort", defaultValue = "1") String sort,
+                        @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                GetStudentNotInCourse result = courseService.getStudentsNotInCourse(courseId, page, pageSize, sort,
+                                sortDir);
+                return new ResponseEntity<>(
+                                new AppResponse<>(HttpStatus.OK.value(), ApiMessage.SUCCESS, result),
+                                HttpStatus.OK);
+        }
 
 }
