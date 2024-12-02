@@ -39,7 +39,10 @@ public interface CourseStudentRepository extends JpaRepository<CourseStudent, Co
             "SELECT cs.student.studentId FROM CourseStudent cs WHERE cs.course.courseId = :courseId)" )
     List<StudentNotInCourseDTO> findStudentsNotInCourse(Long courseId, Pageable pageable);
 
-
-
-
+    @Query("SELECT new com.example.course.dto.response.StudentInCreateCourseDTO(" +
+            "s.studentId, u.userId, u.username, u.email, u.gender, u.dob, u.lastAccess, u.avatar) " +
+            "FROM CourseStudent cs " +
+            "LEFT JOIN cs.student s " +
+            "LEFT JOIN s.user u WHERE cs.course.courseId = :courseId")
+    List<StudentInCreateCourseDTO> findByStudentCourseId(Long courseId);
 }

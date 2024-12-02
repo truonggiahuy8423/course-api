@@ -20,4 +20,5 @@ public class LoginResponse {
     private String token;
     private byte[] avatar;
     private String role;
+    private Long balance;
 }

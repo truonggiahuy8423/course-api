@@ -62,6 +62,9 @@ public class User {
     @Column(name = "avatar", columnDefinition = "LONGBLOB")
     private byte[] avatar;
 
+    // @Column(name = "balance", columnDefinition = "BIGINT default 0L")
+    // private Long balance;
+
     // Relation "One"
     @JsonIgnore
     @OneToMany(mappedBy = "user")
@@ -105,6 +108,5 @@ public class User {
     @OneToOne
     @JoinColumn(name = "lecturer_id", referencedColumnName = "lecturer_id")
     private Lecturer lecturer;
-
 
 }

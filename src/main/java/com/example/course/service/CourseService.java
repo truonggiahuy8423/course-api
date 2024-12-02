@@ -1,5 +1,7 @@
 package com.example.course.service;
 
+import com.example.course.dto.request.UpdateStudentRequest;
+import com.example.course.dto.request.UpdateCourseRequest;
 import com.example.course.dto.response.CourseCardDTO;
 import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
@@ -62,6 +64,8 @@ public class CourseService {
     private CourseLecturerRepository courseLecturerRepository;
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
+    @Autowired
+    private HistoryViewRepository historyViewRepository;
 
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
@@ -434,8 +438,28 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public List<CourseCardDTO> getAllCourseCards() {
-        List<CourseCardDTO> courses = courseRepository.getAllCourseCards();
+    public GetCourseCardDTO getAllCourseCards(Integer page, Integer pageSize, String sort, String sortDir) {
+        String sortAttr = getSortAttribute(sort); // Hàm lấy thuộc tính sắp xếp tương ứng từ số
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDir) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page - 1, pageSize, direction, sortAttr);
+
+        List<CourseCardDTO> courses = courseRepository.getAllCourseCards(pageable);
+        courses.forEach(course -> {
+            // Tính duration theo số tháng giữa startDate và endDate
+            long months = ChronoUnit.MONTHS.between(course.getStartDate(), course.getEndDate());
+            course.setDuration(months + " tháng");
+            List<LecturerDTO> lecturers = getLecturersByCourseId(course.getCourseId());
+            String lecturerNames = lecturers.stream()
+                    .map(LecturerDTO::getUsername) // Sử dụng đúng getter
+                    .collect(Collectors.joining(", "));
+            course.setAuthor(lecturerNames); // Gán tên giảng viên vào CourseCardDTO
+        });
+
+        return new GetCourseCardDTO(courses, courseRepository.findAll().size());
+    }
+
+    public List<CourseCardDTO> getCourseCardsById(List<Long> courseIdList) {
+        List<CourseCardDTO> courses = courseRepository.getCourseCardsById(courseIdList);
 
         courses.forEach(course -> {
             // Tính duration theo số tháng giữa startDate và endDate
@@ -449,5 +473,97 @@ public class CourseService {
         });
 
         return courses;
+    }
+
+
+    public void updateStudentInCourse(UpdateStudentRequest request) {
+        if (request.getCourseId() == null || request.getStudentIds() == null || request.getStudentIds().isEmpty()) {
+            System.out.println("Request received: CourseId=" + request.getCourseId());
+            System.out.println("Student IDs: " + request.getStudentIds());
+            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                    "Course ID or Student IDs cannot be null or empty.");
+        }
+
+        // Fetch courseId and studentIds from the request object
+        Long courseId = Long.valueOf(request.getCourseId());  // Convert courseId to Long
+        List<Long> studentIds = request.getStudentIds();
+
+        try {
+            System.out.println("Updating students in course: " + courseId);
+
+            // Kiểm tra khóa học có tồn tại
+            Course course = courseRepository.findById(courseId)
+                    .orElseThrow(() -> new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                            "Course(ID: " + courseId + ") does not exist"));
+
+            System.out.println("Course found: " + courseId);
+
+            // Lấy danh sách các sinh viên từ studentIds
+            List<Student> students = studentRepository.findAllById(studentIds);
+
+            // Kiểm tra xem sinh viên có tồn tại hay không
+            Set<Long> foundStudentIds = students.stream()
+                    .map(Student::getStudentId)
+                    .collect(Collectors.toSet());
+
+            List<Long> nonExistentIds = studentIds.stream()
+                    .filter(id -> !foundStudentIds.contains(id))
+                    .collect(Collectors.toList());
+
+            if (!nonExistentIds.isEmpty()) {
+                throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION,
+                        "Students(ID: " + nonExistentIds.stream()
+                                .map(String::valueOf)
+                                .collect(Collectors.joining(", ")) + ") do not exist");
+            }
+
+            // Lấy danh sách sinh viên hiện tại trong khóa học
+            Pageable pageable = Pageable.unpaged(); // Không phân trang
+            List<StudentInCreateCourseDTO> currentStudents = courseStudentRepository.findByCourseId(courseId, pageable);
+            Set<Long> currentStudentIds = currentStudents.stream()
+                    .map(StudentInCreateCourseDTO::getStudentId)
+                    .collect(Collectors.toSet());
+
+            // 1. Thêm sinh viên mới vào khóa học nếu chưa có
+            for (Student student : students) {
+                if (!currentStudentIds.contains(student.getStudentId())) {
+                    CourseStudentId courseStudentId = new CourseStudentId(courseId, student.getStudentId());
+                    CourseStudent newCourseStudent = CourseStudent.builder()
+                            .id(courseStudentId)
+                            .course(course)
+                            .student(student)
+                            .build();
+                    courseStudentRepository.save(newCourseStudent);
+                    System.out.println("Added student ID: " + student.getStudentId());
+                }
+            }
+
+            // 2. Xóa sinh viên không có trong danh sách request
+            for (StudentInCreateCourseDTO currentStudent : currentStudents) {
+                if (!foundStudentIds.contains(currentStudent.getStudentId())) {
+                    CourseStudentId courseStudentId = new CourseStudentId(courseId, currentStudent.getStudentId());
+                    courseStudentRepository.deleteById(courseStudentId);
+                    System.out.println("Removed student ID: " + currentStudent.getStudentId());
+                }
+            }
+
+        } catch (Exception e) {
+            // Log chi tiết lỗi và throw lại exception để có thể theo dõi lỗi từ bên ngoài
+            System.err.println("An error occurred while updating students in the course: " + e.getMessage());
+            e.printStackTrace();  // Log lỗi chi tiết
+            throw new AppRuntimeException(ExceptionType.INTERNAL_SERVER_ERROR, "An unexpected error occurred while updating students in the course.");
+        }
+    }
+
+
+    public GetStudentsDTO getAllStudentsByCourseId(Long courseId) {
+        List<StudentInCreateCourseDTO> students = courseStudentRepository.findByStudentCourseId(courseId);
+        Integer total = courseStudentRepository.countStudentsByCourseId(courseId);
+        return new GetStudentsDTO(students, total);
+    }
+
+    public List<HistoryView> getHistoryView(Long userId) {
+        Pageable pageable = PageRequest.of(0, 5); // Trang đầu tiên, 5 kết quả
+        return historyViewRepository.getHistoryViewsByUserId(userId, pageable);
     }
 }
