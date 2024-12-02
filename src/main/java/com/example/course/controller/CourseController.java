@@ -68,7 +68,7 @@ public class CourseController {
 
                 System.out.println(page);
                 User user = userRepository.findById(userId).get();
-                if (user.getLecturer().getLecturerId() != null) {
+                if (user.getLecturer() != null) {
                         System.out.println(
                                         user.getLecturer().getLecturerId());
                         return new ResponseEntity<AppResponse<GetCoursesDTO>>(
@@ -79,8 +79,7 @@ public class CourseController {
                                                                         user.getLecturer().getLecturerId())),
                                         HttpStatus.OK);
                 }
-
-                if (user.getStudent().getStudentId() != null) {
+                if (user.getStudent() != null) {
                         return new ResponseEntity<AppResponse<GetCoursesDTO>>(
                                         new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
                                                         ApiMessage.SUCCESS,
@@ -88,6 +87,7 @@ public class CourseController {
                                                                         user.getStudent().getStudentId())),
                                         HttpStatus.OK);
                 }
+
                 return new ResponseEntity<AppResponse<GetCoursesDTO>>(
                                 new AppResponse<GetCoursesDTO>(HttpStatus.OK.value(),
                                                 ApiMessage.SUCCESS,
@@ -137,6 +137,18 @@ public class CourseController {
                                 HttpStatus.OK);
         }
 
+        @GetMapping("/history-view")
+        public ResponseEntity<AppResponse<Boolean>> historyView(@RequestParam(value = "courseId") Long courseId) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = Long.valueOf(authentication.getName());
+
+            return new ResponseEntity<AppResponse<Boolean>>(
+                    new AppResponse<Boolean>(HttpStatus.OK.value(),
+                            ApiMessage.SUCCESS,
+                            courseService.historyView(userId, courseId)),
+                    HttpStatus.OK);
+
+        }
     @GetMapping("/get-recommendation")
     public ResponseEntity<AppResponse<List<CourseCardDTO>>> getSubjectList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -145,7 +157,7 @@ public class CourseController {
         List<Long> input = historyViewList.stream().map((item) -> item.getCourse().getCourseId()).toList();
 
         System.out.println("sizeee: " +  input.size());
-        String flaskApiUrl = "http://127.0.0.1:5000";
+        String flaskApiUrl = "https://coursesrecommendation-ddebe9gadebvgncp.southeastasia-01.azurewebsites.net";
         String flaskApiKey = "your_secret_api_key";
 
 

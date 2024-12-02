@@ -71,8 +71,8 @@ List<CourseCardDTO> getAllCourseCards(Pageable pageable);
 List<CourseCardDTO> getCourseCardsById(@Param("courseIdList") List<Long> courseIdList);
 
 
-@Override
-List<Course> findAll();
+//@Override
+//List<Course> findAll();
 
         @Override
         List<Course> findAll();
@@ -95,6 +95,9 @@ List<Course> findAll();
         @Query("SELECT c FROM Course c " +
                         "LEFT JOIN FETCH c.lecturers l ")
         List<Object[]> test(Pageable pageable);
+
+
+        Course findCourseByCourseId(Long courseId);
 
         // @Query("SELECT c " +
         // "FROM Course c ")

@@ -7,6 +7,7 @@ import com.example.course.dto.response.CourseDTO;
 import com.example.course.dto.response.GetCoursesDTO;
 import com.example.course.dto.response.LecturerDTO;
 import com.example.course.entity.Lecturer;
+import com.example.course.entity.composite.HistoryId;
 import com.example.course.repository.CourseRepository;
 import com.example.course.repository.LecturerRepository;
 import com.example.course.dto.request.CreateCourseRequest;
@@ -27,6 +28,7 @@ import com.example.course.entity.Lecturer;
 import com.example.course.repository.CourseRepository;
 import com.example.course.repository.LecturerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -66,6 +68,8 @@ public class CourseService {
     private CourseScheduleRepository courseScheduleRepository;
     @Autowired
     private HistoryViewRepository historyViewRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<CourseDTO> getAllCourses(int page, int size) {
         return courseRepository.getCourses(PageRequest.of(page, size));
@@ -565,5 +569,34 @@ public class CourseService {
     public List<HistoryView> getHistoryView(Long userId) {
         Pageable pageable = PageRequest.of(0, 5); // Trang đầu tiên, 5 kết quả
         return historyViewRepository.getHistoryViewsByUserId(userId, pageable);
+    }
+
+    public Boolean historyView(Long userId, Long courseId) {
+        HistoryView hv = new HistoryView();
+
+        hv.setCreatedDate(LocalDateTime.now());
+        hv.setUpdatedDate(LocalDateTime.now());
+
+        System.out.println(courseId);
+        System.out.println(userId);
+
+        Course course = courseRepository.findCourseByCourseId(courseId);
+//        course.setCourseId(courseId);
+        hv.setCourse(course);
+
+        User user = userRepository.findByUserId(userId);
+//        user.setUserId(userId);
+        hv.setUser(user);
+
+
+        try {
+            historyViewRepository.save(hv);
+            return true;
+        } catch (DataIntegrityViolationException e) {
+            throw new AppRuntimeException(ExceptionType.DATA_INTEGRITY_VIOLATION);
+        } catch (Exception e) {
+            throw new AppRuntimeException(ExceptionType.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
     }
 }

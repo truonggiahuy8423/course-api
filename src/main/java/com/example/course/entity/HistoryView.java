@@ -26,13 +26,11 @@ public class HistoryView {
     // Relation "Many"
     @JsonIgnore
     @ManyToOne
-    @MapsId("courseId")
     @JoinColumn(name = "course_id", referencedColumnName = "course_id")
     private Course course;
 
     @JsonIgnore
     @ManyToOne
-    @MapsId("userId")
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
